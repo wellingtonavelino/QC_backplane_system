@@ -1,0 +1,26 @@
+
+==== New session: Thu Apr 24 13:40:33 -0400 2025 ====
+Found device: xczu47dr_0 (Part: xczu47dr)
+⛔ Skipped non-programmable device: xczu47dr_0
+   Reason: ERROR: [Labtoolstcl 44-56] hw_device [xczu47dr_0] does not have a [PROGRAM.HW_STATUS] property
+
+Found device: arm_dap_1 (Part: arm_dap)
+⛔ Skipped non-programmable device: arm_dap_1
+   Reason: ERROR: [Labtoolstcl 44-10] Device arm_dap_1 is not programmable
+
+
+==== New session: Thu Apr 24 13:45:55 -0400 2025 ====
+Found device: xczu47dr_0 (Part: xczu47dr)
+⛔ Could not program xczu47dr_0 — ERROR: [Labtoolstcl 44-56] hw_device [xczu47dr_0] does not have a [PROGRAM.HW_STATUS] property
+
+Found device: arm_dap_1 (Part: arm_dap)
+⛔ Could not program arm_dap_1 — ERROR: [Labtoolstcl 44-10] Device arm_dap_1 is not programmable
+
+
+==== New session: Thu Apr 24 13:53:30 -0400 2025 ====
+Found device: xczu47dr_0 (Part: xczu47dr)
+⛔ Error programming xczu47dr_0 — ERROR: [Labtoolstcl 44-56] hw_device [xczu47dr_0] does not have a [PROGRAM.HW_STATUS] property
+
+Found device: arm_dap_1 (Part: arm_dap)
+⛔ Error programming arm_dap_1 — ERROR: [Labtoolstcl 44-10] Device arm_dap_1 is not programmable
+

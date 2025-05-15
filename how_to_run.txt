@@ -1,0 +1,16 @@
+IBERT QC Testing
+Make sure that all these files are in the folder used to test:
+- IBERT script (run_ibert_qc_multi.tcl)
+- IBERT log file (ibert_qc_ber.log)
+- devices and links file .txt (ibert_05012025-2.txt)
+- fpga bit file (example_ibert_ultrascale_gty_0.bit)
+
+1) Open Windows POWERSHELL
+
+2) Go to test directory: 
+
+2) On the promt, type:
+PS G:\IBERT_CRS_Boards> & "D:\Xilinx\Vivado_Lab\2023.1.1\bin\vivado_lab.bat" -mode batch -nojournal -nolog `
+>>     -source run_ibert_qc_multi.tcl -log multi_run.log
+
+All results are located on ibert_qc_ber_log, listed per date.
