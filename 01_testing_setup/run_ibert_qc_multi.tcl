@@ -150,7 +150,10 @@ foreach entry $boards {
         puts "ERROR: bitfile '$bitfile' missing"; continue
     }
     set_property PROGRAM.FILE $bitfile $fpga_dev
+
+	puts -nonewline "Programming FPGA... "
     program_hw_devices $fpga_dev
+	puts "Done."
 
     # 4.3) Refresh so the IBERT cores become visible
     refresh_hw_device -force_poll $fpga_dev
@@ -259,10 +262,22 @@ foreach entry $boards {
         # 2.4.1) Re-create the SIO link & arm PRBS31
         set linkObj [create_hw_sio_link $txObj $rxObj]
         commit_hw_sio   $linkObj
+				
+		# Set PRBS pattern
         set_property TX_PATTERN {PRBS 31-bit} $linkObj
         set_property RX_PATTERN {PRBS 31-bit} $linkObj
+		
+		# Additional signal integrity settings
+		set_property TXPRE {3.90 dB (01111)} $linkObj 
+		#set_property TXPRE {1.87 dB (01000)} $linkObj
+		set_property TXPOST {3.99 dB (01111)} $linkObj
+		#set_property TXPOST {2.98 dB (01011)} $linkObj
+		set_property TXDIFFSWING {730 mV (01101)} $linkObj
+		#set_property TXDIFFSWING {780 mV (10000)} $linkObj
+		
+		# Commit settings (non-blocking commit is acceptable here)
         commit_hw_sio -non_blocking $linkObj
-		after 1000
+		after 500
 		
 		# record the link object and a label
         lappend linkObjs [list $linkObj "$txName->$rxName"]
@@ -277,14 +292,14 @@ foreach entry $boards {
 		# assert reset
 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 1 $lnk
 		commit_hw_sio -non_blocking $lnk
-		after 200
+		after 500
 	}
 	# de-assert reset
 	foreach pair $linkObjs {
 		set lnk [lindex $pair 0]
 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 0 $lnk
 		commit_hw_sio -non_blocking $lnk
-		after 1000
+		after 2000
 	}
 	puts "OK: error counters cleared"
 	
