@@ -20,14 +20,15 @@ set log_fh   [open $log_file a]
 # Write a title and timestamp
 puts $log_fh "IBERT QC BER Log"
 puts $log_fh "Date: [clock format [clock seconds] -format {%Y-%m-%d %H:%M:%S}]"
-puts $log_fh ""
-puts $log_fh "Serial,Link,BER"
+#puts $log_fh ""
+#puts $log_fh "Serial,Link,BER"
+puts $log_fh "Serial,from Board,to Board,BER"
 # ————————————————————————————————————————————————————————————
 
 # ————————————————————————————————
 # 0) User parameters (make sure these appear 
 # before you ever use $cfg_file or $max_boards)
-set cfg_file   "ibert_05012025-2.txt"
+set cfg_file   "ibert_05012025-3.txt"
 set max_boards 4
 # ————————————————————————————————
 
@@ -99,10 +100,11 @@ foreach entry $boards {
     incr idx
     puts "\n=== Board #$idx: $entry ==="
     set parts [split $entry ","]
-    set serial    [lindex $parts 0]
-    set bitfile   [lindex $parts 1]
-    set threshold [expr {[lindex $parts 2]}]
-    set links     [lrange $parts 3 end]
+    set serial    [lindex $parts 1]
+    set bitfile   [lindex $parts 2]
+    set threshold [expr {[lindex $parts 3]}]
+	set paths     [lrange $parts 4 6]
+    set links     [lrange $parts 7 end]
 
     # 4.1) Find the target by serial
     set tgt ""
@@ -207,9 +209,11 @@ foreach entry $boards {
 foreach entry $boards {
     # parse exactly as in Phase 1
     set parts     [split $entry ","]
-    set serial    [lindex $parts 0]
-    set threshold [expr {[lindex $parts 2]}]
-    set links     [lrange $parts 3 end]
+	set to_board  [lindex $parts 0]
+    set serial    [lindex $parts 1]
+    set threshold [expr {[lindex $parts 3]}]
+	set paths     [lrange $parts 4 6]
+    set links     [lrange $parts 7 end]
 
     puts "\n=== BER Test for board serial=$serial ==="
 
@@ -258,7 +262,7 @@ foreach entry $boards {
         set_property TX_PATTERN {PRBS 31-bit} $linkObj
         set_property RX_PATTERN {PRBS 31-bit} $linkObj
         commit_hw_sio -non_blocking $linkObj
-		after 500
+		after 1000
 		
 		# record the link object and a label
         lappend linkObjs [list $linkObj "$txName->$rxName"]
@@ -273,38 +277,54 @@ foreach entry $boards {
 		# assert reset
 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 1 $lnk
 		commit_hw_sio -non_blocking $lnk
-		after 1000
+		after 200
 	}
 	# de-assert reset
 	foreach pair $linkObjs {
 		set lnk [lindex $pair 0]
 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 0 $lnk
 		commit_hw_sio -non_blocking $lnk
-		after 500
+		after 1000
 	}
 	puts "OK: error counters cleared"
+	
+	set paths [lrange $parts 4 6]
+	set from_board1 [lindex $paths 0]
+	set from_board2 [lindex $paths 1]
+	set from_board3 [lindex $paths 2]
+	
+	set board_labels [list $from_board1 $from_board2 $from_board3]
+	set i 0
+
 
     # 4.6) Now run BER test on each link
     foreach pair $linkObjs {
         set linkObj [lindex $pair 0]
         set label   [lindex $pair 1]
+		
+		set bp_path [lindex $board_labels $i]
 
         puts "\nINFO: $label waiting for ≥ $threshold bits…"
         set bits 0
         while {$bits < $threshold} {
             refresh_hw_device -force_poll $fpga_dev
             set bits [get_property RX_RECEIVED_BIT_COUNT $linkObj]
-            after 1000
+            after 200
         }
         refresh_hw_device -force_poll $fpga_dev
         set ber [get_property RX_BER $linkObj]
         puts "RESULT: $serial $label → bits=$bits   BER=$ber"
-		puts $log_fh "$serial,$label,$ber"
+		#puts $log_fh "$serial,$label,$ber" bp_path
+		puts $log_fh "$serial,$bp_path,$to_board,$ber"
+		
+		incr i
     }
 
     # 2.5) Close this target before moving on
     catch { close_hw_target }
 }
+puts $log_fh "\n=== All BER tests complete ==="
+puts $log_fh ""
 
 puts "\n=== All BER tests complete ==="
 
