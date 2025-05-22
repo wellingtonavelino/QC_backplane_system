@@ -58,7 +58,7 @@ puts "DEBUG: tried for hw_server.bat:"
 foreach p $triedPaths { puts "  $p" }
 
 if {$hw_server_bat eq ""} {
-    set fallback "D:/Xilinx/Vivado_Lab/2023.1.1/bin/hw_server.bat"
+    set fallback "home/lab/Xilinx/Vivado_Lab/2024.2/bin/hw_server.bat"
 	# in linux: set fallback "home/Xilinx/Vivado/2024.2/lab/bin/hw_server"
     puts "WARN: auto-detect failed, falling back to $fallback"
     if {[file exists $fallback]} {
