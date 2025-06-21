@@ -28,11 +28,13 @@ puts $log_fh "Serial,from Board,to Board,BER, ERRORS"
 # ————————————————————————————————
 # 0) User parameters (make sure these appear 
 # before you ever use $cfg_file or $max_boards)
-set cfg_file   "ibert_05012025-3.txt"
+#set cfg_file   "ibert_05012025-3.txt"
+set cfg_file   "ibert_links-lab_test.txt"
 
 # 0) serial numbers (make sure these appear 
 # before you ever use $cfg_file or $max_boards)
-set serial_file   "serial_numbers.txt"
+#set serial_file   "serial_numbers.txt"
+set serial_file   "serial_numbers_lab_test.txt"
 set max_boards 4
 # ————————————————————————————————
 
@@ -156,6 +158,14 @@ foreach entry $boards {
 	# Before switching, close any open target
     catch { close_hw_target }
     puts "INFO: switching to target [get_property NAME $tgt]..."
+	after 1000
+	# Test if all connectior were closed
+	# set retries 0
+		# while {[llength [get_hw_targets -filter {IS_OPEN==true}]] != 0 && $retries < 5} {
+			# after 1000
+			# incr retries
+		# }
+	after 5000
     current_hw_target $tgt
 
 
@@ -220,8 +230,9 @@ foreach entry $boards {
 
         # create & commit the link
         set linkObj [create_hw_sio_link $txObj $rxObj]
-		after 500
+		after 5000
         commit_hw_sio $linkObj
+		after 5000
 
         # enable PRBS 31-bit
         #set_property TX_PATTERN {PRBS 31-bit} $linkObj
@@ -236,8 +247,13 @@ foreach entry $boards {
 	
 	# 4.x) Done with this board: close it so next one can open
     puts "INFO: closing target [get_property NAME $tgt]"
-    catch { close_hw_target }
-	after 500
+    # catch { close_hw_target }
+		# set retries 0
+		# while {[llength [get_hw_targets -filter {IS_OPEN==true}]] != 0 && $retries < 5} {
+			# after 1000
+			# incr retries
+		# }
+	after 5000
 }
 
 # ======================================================
@@ -260,11 +276,16 @@ foreach entry $boards {
 
     # 2.1) Switch & open the correct target
     catch { close_hw_target }
-	after 500
+	# set retries 0
+	# while {[llength [get_hw_targets -filter {IS_OPEN==true}]] != 0 && $retries < 5} {
+			# after 1000
+			# incr retries
+		# }
+	after 5000
 	catch { disconnect_hw_server }
-	after 500
+	after 2000
 	connect_hw_server -url localhost:3121
-	after 500
+	after 5000
     foreach t [get_hw_targets] {
         if {[lindex [split [get_property UID $t] "/"] end] eq $serial} {
             current_hw_target $t
@@ -286,9 +307,9 @@ foreach entry $boards {
 
     # 2.3) Grab raw TX/RX endpoints
     set txs [get_hw_sio_txs -of_objects $fpga_dev]
-	after 500
+	after 1000
     set rxs [get_hw_sio_rxs -of_objects $fpga_dev]
-	after 500
+	after 1000
 
     # 2.4) For each link in the CSV, rebuild & test it
 	set linkObjs {}                   ;# initialize
@@ -314,30 +335,58 @@ foreach entry $boards {
 				
 		# Set PRBS pattern
         set_property TX_PATTERN {PRBS 31-bit} $linkObj
-		after 500
         set_property RX_PATTERN {PRBS 31-bit} $linkObj
-		after 500
+		#set_property TX_PATTERN {PRBS 7-bit} $linkObj
+        #set_property RX_PATTERN {PRBS 7-bit} $linkObj
 		
 		# Additional signal integrity settings
-		set_property TXPRE {3.90 dB (01111)} $linkObj
-		after 500		
+		#set_property TXPRE {3.90 dB (01111)} $linkObj
 		#set_property TXPRE {1.87 dB (01000)} $linkObj
-		set_property TXPOST {3.99 dB (01111)} $linkObj
-		after 500
+		#set_property TXPRE {0.01 dB (00000)} $linkObj
+		#after 1000		
+		#set_property TXPOST {3.99 dB (01111)} $linkObj
 		#set_property TXPOST {2.98 dB (01011)} $linkObj
-		set_property TXDIFFSWING {730 mV (01101)} $linkObj
-		after 500
+		#set_property TXPOST {0.00 dB (00000)} $linkO
+		#after 1000
+		#set_property TXDIFFSWING {730 mV (01101)} $linkObj
 		#set_property TXDIFFSWING {780 mV (10000)} $linkObj
+		#set_property TXDIFFSWING {390 mV (00000)} $linkObj
+		#after 3000
+
 		
 		# Commit settings (non-blocking commit is acceptable here)
         commit_hw_sio -non_blocking $linkObj
-		after 500
+		after 1000
 		
 		# record the link object and a label
         lappend linkObjs [list $linkObj "$txName->$rxName"]
         # cleanup txObj/rxObj for next iteration
         unset txObj rxObj
-		after 500
+		after 1000
+		
+		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 1 $linkObj
+		commit_hw_sio -non_blocking $linkObj
+		after 1000
+		
+		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 0 $linkObj
+		commit_hw_sio -non_blocking $linkObj
+		after 1000
+		
+		# Poll RXCDRLOCKSTICKY
+		set elapsed 0
+		set timeout 1000
+		# while {$elapsed < $timeout} {
+			# refresh_hw_device -force_poll [get_hw_devices]
+			# set locked [get_property LOGIC.RXCDRLOCKSTICKY $linkObj]
+			# if {$locked} {
+				# puts " CDR LOCKED (sticky) after $elapsed sec"
+				# return 1
+        # }
+        # after 1000
+        # incr elapsed
+    # }
+    puts "Timeout: RXCDRLOCKSTICKY never asserted"
+		
 	}
 		
 	# 4.x) Reset all link error counters before BER test
@@ -346,17 +395,17 @@ foreach entry $boards {
 		set lnk [lindex $pair 0]
 		# assert reset
 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 1 $lnk
-		after 1500
+		after 1000
 		commit_hw_sio -non_blocking $lnk
-		after 1500
+		after 5000
 	}
 	# de-assert reset
 	foreach pair $linkObjs {
 		set lnk [lindex $pair 0]
 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 0 $lnk
-		after 1500
+		after 1000
 		commit_hw_sio -non_blocking $lnk
-		#after 1500
+		after 5000
 	}
 	puts "OK: error counters cleared"
 	
@@ -381,12 +430,12 @@ foreach entry $boards {
 		set link_error 0
         while {$bits < $threshold} {
             refresh_hw_device -force_poll $fpga_dev
-			after 500
+			after 3000
             set bits [get_property RX_RECEIVED_BIT_COUNT $linkObj]
-            after 500
+            after 3000
         }
         refresh_hw_device -force_poll $fpga_dev
-		after 1000
+		after 5000
         set ber [get_property RX_BER $linkObj]
 		set link_error [expr {$bits*$ber}]
         puts "RESULT: $serial - $bp_path -  bits=$bits   BER=$ber  ERRORS=$link_error"

@@ -58,7 +58,7 @@ puts "DEBUG: tried for hw_server.bat:"
 foreach p $triedPaths { puts "  $p" }
 
 if {$hw_server_bat eq ""} {
-    set fallback "home/lab/Xilinx/Vivado_Lab/2024.2/bin/hw_server.bat"
+    set fallback "/home/lab/Xilinx/Vivado_Lab/2024.2/bin/hw_server"
 	# in linux: set fallback "home/Xilinx/Vivado/2024.2/lab/bin/hw_server"
     puts "WARN: auto-detect failed, falling back to $fallback"
     if {[file exists $fallback]} {
@@ -296,14 +296,19 @@ foreach entry $boards {
 				
 		# Set PRBS pattern
         set_property TX_PATTERN {PRBS 31-bit} $linkObj
+		after 500
         set_property RX_PATTERN {PRBS 31-bit} $linkObj
+		after 500
 		
 		# Additional signal integrity settings
 		set_property TXPRE {3.90 dB (01111)} $linkObj 
+		after 500
 		#set_property TXPRE {1.87 dB (01000)} $linkObj
 		set_property TXPOST {3.99 dB (01111)} $linkObj
+		after 500
 		#set_property TXPOST {2.98 dB (01011)} $linkObj
 		set_property TXDIFFSWING {730 mV (01101)} $linkObj
+		after 500
 		#set_property TXDIFFSWING {780 mV (10000)} $linkObj
 		
 		# Commit settings (non-blocking commit is acceptable here)
@@ -322,6 +327,7 @@ foreach entry $boards {
 		set lnk [lindex $pair 0]
 		# assert reset
 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 1 $lnk
+		after 500
 		commit_hw_sio -non_blocking $lnk
 		after 500
 	}

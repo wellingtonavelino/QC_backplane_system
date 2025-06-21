@@ -1,0 +1,17 @@
+# ibert_05012025-3.txt
+# Format: UID,BITFILE,THRESHOLD_BITS,LINK0,LINK1,LINK2,LINK3
+#   SLOT           = Connector where device is plugged
+#   UID            = vendor/serial (the HW‐Manager UID property)
+#   BITFILE        = name of the .bit in this folder
+#   THRESHOLD_BITS = number of bits to receive before reporting
+#   CRATE LINKS    = identifier of the link
+#   LINKn          = full link path string for get_hw_sio_links
+#
+# On-board Testing (SLOT 0):
+slot0,000043A,example_ibert_ultrascale_gty_0.bit,100000000000,slot1-->,slot2-->,slot3-->,Quad_131/MGT_X0Y18/TX,Quad_131/MGT_X0Y18/RX,Quad_131/MGT_X0Y16/TX,Quad_131/MGT_X0Y16/RX,Quad_130/MGT_X0Y14/TX,Quad_130/MGT_X0Y14/RX
+# On-board Testing  (SLOT 1):
+slot1,000025A,example_ibert_ultrascale_gty_0.bit,100000000000,slot0-->,slot2-->,slot3-->,Quad_131/MGT_X0Y18/TX,Quad_131/MGT_X0Y18/RX,Quad_131/MGT_X0Y16/TX,Quad_131/MGT_X0Y16/RX,Quad_130/MGT_X0Y14/TX,Quad_130/MGT_X0Y14/RX
+# On-board Testing  (SLOT 2):
+slot2,00021A,example_ibert_ultrascale_gty_0.bit,100000000000,slot0-->,slot1-->,slot3-->,Quad_131/MGT_X0Y18/TX,Quad_131/MGT_X0Y18/RX,Quad_131/MGT_X0Y16/TX,Quad_131/MGT_X0Y16/RX,Quad_130/MGT_X0Y14/TX,Quad_130/MGT_X0Y14/RX
+# On-board Testing  (SLOT 3):
+slot3,000047A,example_ibert_ultrascale_gty_0.bit,100000000000,slot0-->,slot1-->,slot2-->,Quad_131/MGT_X0Y18/TX,Quad_131/MGT_X0Y18/RX,Quad_131/MGT_X0Y16/TX,Quad_131/MGT_X0Y16/RX,Quad_130/MGT_X0Y14/TX,Quad_130/MGT_X0Y14/RX
