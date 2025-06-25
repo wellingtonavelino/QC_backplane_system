@@ -29,9 +29,11 @@ puts $log_fh "Serial,from Board,to Board,BER, ERRORS"
 # ————————————————————————————————
 #set cfg_file   "ibert_05012025-3.txt"
 #set cfg_file   "ibert_links-lab_test.txt"
-set cfg_file "ibert_05012025-3.txt"
+#set cfg_file "ibert_05012025-3.txt"
+set cfg_file "ibert_24062025-3-link_isolation.txt"
 #set serial_file   "serial_numbers.txt"
-set serial_file   "serial_numbers.txt"
+#set serial_file   "serial_numbers.txt"
+set serial_file   "serial_numbers_rev2-rev4.txt"
 set max_boards 4
 # ————————————————————————————————
 
