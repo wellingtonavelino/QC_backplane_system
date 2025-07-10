@@ -1,0 +1,80 @@
+#-----------------------------------------------------------
+# Vivado Lab Edition v2023.1.1 (64-bit)
+# SW Build 3900603 on Fri Jun 16 19:31:24 MDT 2023
+# 
+# 
+# Start of session at: Thu Jul 10 12:12:30 2025
+# Process ID: 15108
+# Current directory: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui
+# Command line: vivado_lab.exe -mode batch -source C:\Users\welli\AppData\Local\Temp\tmpkk48o4sx.tcl
+# Log file: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui/vivado_lab.log
+# Journal file: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui\vivado_lab.jou
+# Running On: DESKTOP-HNI266F, OS: Windows, CPU Frequency: 1992 MHz, CPU Physical cores: 4, Host memory: 16977 MB
+#-----------------------------------------------------------
+source {C:\Users\welli\AppData\Local\Temp\tmpkk48o4sx.tcl}
+# source "print_latest_ber_results.tcl"
+## set log_file "ibert_qc_ber.log"
+## if {![file exists $log_file]} {
+##     puts "ERROR: File '$log_file' not found."
+##     exit 1
+## }
+## set fh [open $log_file r]
+## set lines [split [read $fh] "\n"]
+## close $fh
+## set starts {}
+## for {set i 0} {$i < [llength $lines]} {incr i} {
+##     if {[string match "IBERT QC BER Log*" [lindex $lines $i]]} {
+##         lappend starts $i
+##     }
+## }
+## if {[llength $starts] == 0} {
+##     puts "No block found in log."
+##     exit 0
+## }
+## set start_idx [lindex $starts end]
+## set block [lrange $lines $start_idx end]
+## set header_line ""
+## set data_lines {}
+## foreach line $block {
+##     if {[string match "Serial,*" $line]} {
+##         set header_line $line
+##         continue
+##     }
+##     if {[string match "===*" $line] || $line eq ""} {
+##         break
+##     }
+##     if {$header_line ne ""} {
+##         lappend data_lines $line
+##     }
+## }
+## if {$header_line eq "" || [llength $data_lines] == 0} {
+##     puts "Block found, but no data available."
+##     exit 0
+## }
+## puts "\n Lastest BER Results:"
+
+ Lastest BER Results:
+## puts "---------------------------"
+---------------------------
+## puts $header_line
+Serial,from Board,to Board,BER, ERRORS
+## foreach line $data_lines {
+##     puts $line
+## }
+00038A,slot1-->,slot0,0.3918614162606015e-12,7.669686533788125
+00038A,slot2-->,slot0,0.4001887609899876e-12, 5.669686533788125
+00038A,slot3-->,slot0,1.6015162601013345e-12,10.669686533788125
+000040A,slot0-->,slot1,6.2501677932546117e-13,0.8099634641911524
+000040A,slot2-->,slot1,6.2501677932546117e-13,0.642420329247553
+000040A,slot3-->,slot1,6.2501677932546117e-13,0.634214319851017
+000047A,slot0-->,slot2,8.3918614162606015e-12,10.669686533788125
+000047A,slot1-->,slot2,3.1677932546117999e-13,0.2424682252396327
+000047A,slot3-->,slot2,6.7793254611700001e-13,0.560686693527363
+000043A,slot0-->,slot3,5.1487740302683727e-12,6.55266866885515
+000043A,slot1-->,slot3,6.6001677932546117e-13,0.2441689439525054
+000043A,slot2-->,slot3,6.2501677932546117e-13,0.567317270077593
+## puts "---------------------------"
+---------------------------
+## puts "Shown Lines: [llength $data_lines]"
+Shown Lines: 12
+INFO: [Common 17-206] Exiting vivado_lab at Thu Jul 10 12:12:31 2025...

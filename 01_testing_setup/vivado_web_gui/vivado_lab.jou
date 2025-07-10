@@ -1,0 +1,14 @@
+#-----------------------------------------------------------
+# Vivado Lab Edition v2023.1.1 (64-bit)
+# SW Build 3900603 on Fri Jun 16 19:31:24 MDT 2023
+# 
+# 
+# Start of session at: Thu Jul 10 12:12:30 2025
+# Process ID: 15108
+# Current directory: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui
+# Command line: vivado_lab.exe -mode batch -source C:\Users\welli\AppData\Local\Temp\tmpkk48o4sx.tcl
+# Log file: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui/vivado_lab.log
+# Journal file: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui\vivado_lab.jou
+# Running On: DESKTOP-HNI266F, OS: Windows, CPU Frequency: 1992 MHz, CPU Physical cores: 4, Host memory: 16977 MB
+#-----------------------------------------------------------
+source {C:\Users\welli\AppData\Local\Temp\tmpkk48o4sx.tcl}

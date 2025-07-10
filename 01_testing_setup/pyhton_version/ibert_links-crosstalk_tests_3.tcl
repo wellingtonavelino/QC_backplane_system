@@ -31,10 +31,16 @@ puts $log_fh "Serial,from Board,to Board,BER, ERRORS"
 #set cfg_file   "ibert_links-lab_test.txt"
 #set cfg_file "ibert_05012025-3-link_isolation.txt"
 #set cfg_file "ibert_05012025-3-link_isolation.txt"
-set cfg_file "ibert_24062025-3-link_isolation.txt"
+# --------- on-board links tests  -------------------- #
+#set cfg_file "ibert_06252025-verification_test.txt"
+# --------- qsfp links tests  -------------------- #
+set cfg_file "ibert_06252025-qsfp_test.txt"
 #set serial_file   "serial_numbers.txt"
 #set serial_file   "serial_numbers.txt"
-set serial_file   "serial_numbers_rev2-rev4.txt"
+# --------- on-board links tests  -------------------- #
+#set serial_file   "serial_numbers_rev4.txt"  
+# --------- qsfp links tests  -------------------- #
+set serial_file   "serial_numbers_qsfp.txt"    
 set max_boards 4
 # ————————————————————————————————
 
@@ -204,12 +210,12 @@ foreach entry $boards {
 
 		
 		# Additional signal integrity settings
-		set_property TXPRE {3.90 dB (01111)} $linkObj
-		#set_property TXPRE {1.87 dB (01000)} $linkObj
+		#set_property TXPRE {3.90 dB (01111)} $linkObj
+		set_property TXPRE {1.87 dB (01000)} $linkObj
 		#set_property TXPRE {0.01 dB (00000)} $linkObj
 		after 5000		
-		set_property TXPOST {3.99 dB (01111)} $linkObj
-		#set_property TXPOST {2.98 dB (01011)} $linkObj
+		#set_property TXPOST {3.99 dB (01111)} $linkObj
+		set_property TXPOST {2.98 dB (01011)} $linkObj
 		#set_property TXPOST {0.00 dB (00000)} $linkO
 		after 5000
 		#set_property TXDIFFSWING {730 mV (01101)} $linkObj

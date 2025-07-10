@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vivado Tcl Launcher</title>
+    <style>
+        body { font-family: sans-serif; padding: 2em; max-width: 800px; margin: auto; }
+        button, input, select { font-size: 16px; margin-top: 10px; padding: 8px; width: 100%; }
+        textarea { width: 100%; height: 300px; margin-top: 10px; font-family: monospace; }
+        .status { margin-top: 20px; font-weight: bold; }
+        table { margin-top: 30px; border-collapse: collapse; width: 100%; }
+        th, td { padding: 6px; border: 1px solid #ccc; text-align: center; font-size: 9pt; }
+
+        /* Spinner */
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #444;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    {% if running %}
+    <!-- Optional: auto-refresh every 10 seconds while running -->
+    <meta http-equiv="refresh" content="20">
+    {% endif %}
+</head>
+<body>
+    <h1>Vivado Tcl Launcher (Live)</h1>
+    <form method="POST">
+        <label for="vivado_path">Vivado Executable Path:</label>
+        <input type="text" id="vivado_path" name="vivado_path" value="{{ vivado_path }}" placeholder="e.g. C:\Xilinx\Vivado\2023.2\bin\vivado.bat" required>
+
+		<div style="margin-top: 10px; display: flex; align-items: center; gap: 10px;">
+		<label for="serial_number" style="white-space: nowrap;"></strong>Serial Number (4 digits):</strong></label>
+		<input type="text" id="serial_number" name="serial_number" pattern="\d{4}" maxlength="4" style="width: 100px;" disabled>
+		</div>
+		<!-- <label for="serial_number">Serial Number (4 digits):</label>
+		<input type="text" id="serial_number" name="serial_number" pattern="\d{4}" maxlength="4" required> --->
+
+        <label for="tcl_script">Choose Tcl Script:</label>
+        <select id="tcl_script" name="tcl_script" required {% if running %}disabled{% endif %}>
+            {% for script in script_list %}
+                <option value="{{ script }}" {% if script == tcl_script %}selected{% endif %}>{{ script }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" id="run-button" {% if running %}disabled{% endif %}>Run Script</button>
+		
+		<button type="button" onclick="window.location.href='/shutdown'" style="background-color: crimson; color: white;">
+			Exit Server
+		</button>
+
+        {% if running %}
+        <div id="spinner" style="margin-top: 10px;">
+            <span class="spinner"></span>
+            <strong>Running...</strong>
+        </div>
+        {% endif %}
+    </form>
+
+    <div class="status">Status: {{ status }}</div>
+
+    <label for="log_output">Live Vivado Output:</label>
+    <textarea id="log_output" readonly></textarea>
+
+    {% if result_table %}
+        <h2>iBERT Results</h2>
+        <div>{{ result_table | safe }}</div>
+    {% endif %}
+
+    <script>
+        const logBox = document.getElementById("log_output");
+        const source = new EventSource("/logs");
+        source.onmessage = function(e) {
+            logBox.value += e.data + "\n";
+            logBox.scrollTop = logBox.scrollHeight;
+        };
+    </script>
+</body>
+</html>

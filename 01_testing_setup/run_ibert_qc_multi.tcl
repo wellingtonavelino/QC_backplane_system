@@ -6,12 +6,15 @@
 #          -nojournal -nolog -log multi_run.log
 # Expects in same folder:
 #   • ibert_qc_ber.log
-#	• ibert_05012025-2.txt   (serial,bitfile,threshold,link0,link1,...)
+#	• ibert_06252025-verification_test.txt 
 #   • example_ibert_ultrascale_gty_0.bit
+#	• serial_numbers.txt
 # ======================================================
-
-# ————————————————————————————————————————————————————————————
-# Open a log file for BER results
+# ----------------------------------------------------------------------------- #
+# ======================================================
+# Phase 1: Open a log file for BER results, connect and program
+#   (must come AFTER all boards have been programmed)
+# ======================================================
 # ————————————————————————————————————————————————————————————
 # Open (or create) the master BER log in append mode
 set log_file "ibert_qc_ber.log"
@@ -25,21 +28,27 @@ puts $log_fh "Date: [clock format [clock seconds] -format {%Y-%m-%d %H:%M:%S}]"
 puts $log_fh "Serial,from Board,to Board,BER, ERRORS"
 # ————————————————————————————————————————————————————————————
 
+# --- 0) User parameters (make sure these appear before you ever use $cfg_file or $max_boards)
 # ————————————————————————————————
-# 0) User parameters (make sure these appear 
-# before you ever use $cfg_file or $max_boards)
 #set cfg_file   "ibert_05012025-3.txt"
-set cfg_file   "ibert_links-lab_test.txt"
-
-# 0) serial numbers (make sure these appear 
-# before you ever use $cfg_file or $max_boards)
+#set cfg_file   "ibert_links-lab_test.txt"
+#set cfg_file "ibert_05012025-3.txt"
+# --------- on-board links tests  -------------------- #
+set cfg_file "ibert_06252025-verification_test.txt"
+# --------- qsfp links tests  -------------------- #
+#set cfg_file "ibert_06252025-qsfp_test.txt"
+#set cfg_file "ibert_rev2_tests.txt"
 #set serial_file   "serial_numbers.txt"
-set serial_file   "serial_numbers_lab_test.txt"
+#set serial_file   "serial_numbers.txt"
+# --------- on-board links tests  -------------------- #
+#set serial_file   "serial_numbers_rev4.txt"  
+# --------- qsfp links tests  -------------------- #
+#set serial_file   "serial_numbers_qsfp.txt"
+set serial_file   "serial_numbers.txt"     
 set max_boards 4
 # ————————————————————————————————
 
-
-# --- 0) Locate & launch hw_server.bat by searching up from vivado.exe ---
+# --- 1) Locate & launch hw_server.bat by searching up from vivado.exe ---
 set vivado_exe [file normalize [info nameofexecutable]]
 set dir         [file dirname $vivado_exe]
 set triedPaths  {}
@@ -78,15 +87,19 @@ if {[catch {
 } else {
     puts "OK: hw_server launched (log→$hw_server_log)"
 }
-after 2000
+after 200
+# ----------------------------------------------------------------------------- #
 
-# --- 2) Open & connect Hardware Manager ---
+
+# --- 2) Open & connect Hardware Manager -------------------------------------- #
 open_hw_manager
-after 1000
+after 800
 connect_hw_server -url localhost:3121
-after 1000
+after 3000
+# ----------------------------------------------------------------------------- #
 
-# --- 3) Read config and collect up to max_boards entries ---
+
+# --- 3) Read config and collect up to max_boards entries --------------------- #
 set boards {}
 set fp [open $cfg_file r]
 foreach line [split [read $fp] "\n"] {
@@ -113,11 +126,51 @@ close $fs
 if {[llength $serial_ns] == 0} {
     puts "ERROR: no valid serial number entries in $serial_file"; exit 1
 }
-
 # global list of all tests: each element = [boardIdx linkObj threshold linkLabel]
 set all_tests {}
+# ----------------------------------------------------------------------------- #
+# ——————————————————————————————————————————————
+# Function: Wait for stable BER and RX bit flow
+# ——————————————————————————————————————————————
+proc wait_for_stable_ber {linkObj thresholdBits max_wait_ms} {
+    set elapsed 0
+    set wait_step 200
 
-# --- 4) Phase 1: Program & setup links for each board ---
+    # Ensure RX bit count is growing
+    set bits_before [get_property RX_RECEIVED_BIT_COUNT $linkObj]
+    after $wait_step
+    set bits_now [get_property RX_RECEIVED_BIT_COUNT $linkObj]
+    if {$bits_now <= $bits_before} {
+        puts "⚠ RX bit count not increasing. Waiting..."
+        while {$elapsed < $max_wait_ms} {
+            refresh_hw_device -force_poll [get_hw_devices]
+            set bits_before $bits_now
+            after $wait_step
+            set bits_now [get_property RX_RECEIVED_BIT_COUNT $linkObj]
+            if {$bits_now > $bits_before} {
+                puts "✅ Bit count increasing"
+                break
+            }
+            incr elapsed $wait_step
+        }
+    }
+
+    # Optional: wait until RX_BER < threshold
+    set ber [get_property RX_BER $linkObj]
+    set max_ber 0.01
+    set elapsed 0
+    while {$ber > $max_ber && $elapsed < $max_wait_ms} {
+        refresh_hw_device -force_poll [get_hw_devices]
+        set ber [get_property RX_BER $linkObj]
+        puts "… Waiting for BER < $max_ber → now=$ber"
+        after $wait_step
+        incr elapsed $wait_step
+    }
+}
+
+# ----------------------------------------------------------------------------- #
+
+# --- 4) Phase 1: Program & setup links for each board ------------------------ #
 set idx 0
 foreach entry $boards {
     
@@ -158,14 +211,14 @@ foreach entry $boards {
 	# Before switching, close any open target
     catch { close_hw_target }
     puts "INFO: switching to target [get_property NAME $tgt]..."
-	after 1000
+	after 10
 	# Test if all connectior were closed
 	# set retries 0
 		# while {[llength [get_hw_targets -filter {IS_OPEN==true}]] != 0 && $retries < 5} {
 			# after 1000
 			# incr retries
 		# }
-	after 5000
+	after 50
     current_hw_target $tgt
 
 
@@ -190,7 +243,7 @@ foreach entry $boards {
         puts "ERROR: bitfile '$bitfile' missing"; continue
     }
     set_property PROGRAM.FILE $bitfile $fpga_dev
-	after 500
+	after 1000
 
 	puts -nonewline "Programming FPGA... "
     program_hw_devices $fpga_dev
@@ -230,9 +283,9 @@ foreach entry $boards {
 
         # create & commit the link
         set linkObj [create_hw_sio_link $txObj $rxObj]
-		after 5000
+		after 500
         commit_hw_sio $linkObj
-		after 5000
+		after 100
 
         # enable PRBS 31-bit
         #set_property TX_PATTERN {PRBS 31-bit} $linkObj
@@ -253,9 +306,10 @@ foreach entry $boards {
 			# after 1000
 			# incr retries
 		# }
-	after 5000
+	after 50
 }
 
+# ----------------------------------------------------------------------------- #
 # ======================================================
 # Phase 2: BER tests on each board, one at a time
 #   (must come AFTER all boards have been programmed)
@@ -274,22 +328,17 @@ foreach entry $boards {
 
     puts "\n=== BER Test for board #$slt: $serial ==="
 
-    # 2.1) Switch & open the correct target
+    # 5.1) Switch & open the correct target
     catch { close_hw_target }
-	# set retries 0
-	# while {[llength [get_hw_targets -filter {IS_OPEN==true}]] != 0 && $retries < 5} {
-			# after 1000
-			# incr retries
-		# }
-	after 5000
+	after 80
 	catch { disconnect_hw_server }
-	after 2000
+	after 80
 	connect_hw_server -url localhost:3121
-	after 5000
+	after 3000
     foreach t [get_hw_targets] {
         if {[lindex [split [get_property UID $t] "/"] end] eq $serial} {
             current_hw_target $t
-			after 500
+			after 80
             if {[catch { open_hw_target } err]} {
                 puts "ERROR opening target $serial: $err"
                 continue 2
@@ -299,23 +348,55 @@ foreach entry $boards {
     }
 	incr slt
 
-    # 2.2) Locate and refresh the FPGA device
+    # 5.2) Locate and refresh the FPGA device
     set fpga_dev [lindex [get_hw_devices -of_objects $t] 0]
 	after 500
     refresh_hw_device -force_poll $fpga_dev
-	after 500
+	after 8000
+	
+	
+	# --- New: clear existent links before creating new ones ---
+	puts "Cleaning old existent links in the device..."
+	set existing_links [get_hw_sio_links -of_objects $fpga_dev]
+	if {[llength $existing_links] > 0} {
+    foreach lnk $existing_links {
+        delete_hw_sio_link $lnk
+		after 100
+    }
+		commit_hw_sio -non_blocking $existing_links
+		after 100
+	} else {
+		puts "ℹ️  No existing links found to delete."
+	}
+	after 8000
 
-    # 2.3) Grab raw TX/RX endpoints
+    # 5.3) Grab raw TX/RX endpoints
     set txs [get_hw_sio_txs -of_objects $fpga_dev]
-	after 1000
+	after 300
     set rxs [get_hw_sio_rxs -of_objects $fpga_dev]
-	after 1000
+	after 300
 
-    # 2.4) For each link in the CSV, rebuild & test it
+    # 5.4) For each link in the CSV, rebuild & test it
 	set linkObjs {}                   ;# initialize
     for {set i 0} {$i < [llength $links]} {incr i 2} {
-        set txName [lindex $links $i]
-        set rxName [lindex $links [expr {$i+1}]]
+        #set txName [lindex $links $i]
+        #set rxName [lindex $links [expr {$i+1}]]
+		
+		# --- Novo bloco para tratamento de ENABLED/DISABLED ---
+		set txRaw [lindex $links $i]
+		set rxRaw [lindex $links [expr {$i+1}]]
+
+		# Ignora o par se qualquer um dos dois estiver marcado como :DISABLED
+		if {[string match "*:DISABLED" $txRaw] || [string match "*:DISABLED" $rxRaw]} {
+			puts "🔕 Skipping link (DISABLED): $txRaw ↔ $rxRaw"
+			continue
+		}
+
+		# Extrai apenas o nome base do TX/RX (removendo :ENABLED ou :DISABLED)
+		set txName [lindex [split $txRaw ":"] 0]
+		set rxName [lindex [split $rxRaw ":"] 0]
+		# --- Novo bloco para tratamento de ENABLED/DISABLED ---
+		
 
         # find the two endpoint objects by suffix match
         set txObj ""; foreach x $txs {
@@ -329,83 +410,138 @@ foreach entry $boards {
             continue
         }
 
-        # 2.4.1) Re-create the SIO link & arm PRBS31
+        # 5.4.1) Re-create the SIO link & arm PRBS31
         set linkObj [create_hw_sio_link $txObj $rxObj]
+		after 500
         commit_hw_sio   $linkObj
+		after 10000
 				
 		# Set PRBS pattern
-        set_property TX_PATTERN {PRBS 31-bit} $linkObj
-        set_property RX_PATTERN {PRBS 31-bit} $linkObj
 		#set_property TX_PATTERN {PRBS 7-bit} $linkObj
         #set_property RX_PATTERN {PRBS 7-bit} $linkObj
+		#set_property TX_PATTERN {PRBS 15-bit} $linkObj
+        #set_property RX_PATTERN {PRBS 15-bit} $linkObj
+		#set_property TX_PATTERN {PRBS 23-bit} $linkObj
+        #set_property RX_PATTERN {PRBS 23-bit} $linkObj
+        set_property TX_PATTERN {PRBS 31-bit} $linkObj
+		after 500
+        set_property RX_PATTERN {PRBS 31-bit} $linkObj
 		
-		# Additional signal integrity settings
-		#set_property TXPRE {3.90 dB (01111)} $linkObj
-		#set_property TXPRE {1.87 dB (01000)} $linkObj
-		#set_property TXPRE {0.01 dB (00000)} $linkObj
-		#after 1000		
-		#set_property TXPOST {3.99 dB (01111)} $linkObj
-		#set_property TXPOST {2.98 dB (01011)} $linkObj
-		#set_property TXPOST {0.00 dB (00000)} $linkO
-		#after 1000
-		#set_property TXDIFFSWING {730 mV (01101)} $linkObj
-		#set_property TXDIFFSWING {780 mV (10000)} $linkObj
-		#set_property TXDIFFSWING {390 mV (00000)} $linkObj
-		#after 3000
-
+		
+		# half data rate = 12.5 GHz
+		#set_property TX_PATTERN {Fast Clk} $linkObj     
+		#set_property RX_PATTERN {Fast Clk} $linkObj    
+		# quarter data rate = 6.25 GHz		
+		#set_property TX_PATTERN {Slow Clk} $linkObj  
+		#set_property RX_PATTERN {Slow Clk} $linkObj
+		after 1000
 		
 		# Commit settings (non-blocking commit is acceptable here)
         commit_hw_sio -non_blocking $linkObj
 		after 1000
+
+		
+		# Additional signal integrity settings
+		#set_property TXPRE {3.90 dB (01111)} $linkObj
+		set_property TXPRE {1.87 dB (01000)} $linkObj
+		#set_property TXPRE {0.01 dB (00000)} $linkObj
+		after 1000		
+		#set_property TXPOST {3.99 dB (01111)} $linkObj
+		set_property TXPOST {2.98 dB (01011)} $linkObj
+		#set_property TXPOST {0.00 dB (00000)} $linkObj
+		after 1000
+		#set_property TXDIFFSWING {730 mV (01101)} $linkObj
+		set_property TXDIFFSWING {780 mV (10000)} $linkObj
+		#set_property TXDIFFSWING {390 mV (00000)} $linkObj
+		after 1000
+
+		
+		# Commit settings (non-blocking commit is acceptable here)
+        commit_hw_sio -non_blocking $linkObj
+		after 10000
 		
 		# record the link object and a label
         lappend linkObjs [list $linkObj "$txName->$rxName"]
+		after 500
         # cleanup txObj/rxObj for next iteration
         unset txObj rxObj
-		after 1000
+		after 8000
 		
 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 1 $linkObj
+		after 500
 		commit_hw_sio -non_blocking $linkObj
-		after 1000
+		after 10000
 		
 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 0 $linkObj
+		after 500
 		commit_hw_sio -non_blocking $linkObj
-		after 1000
+		after 10000
 		
 		# Poll RXCDRLOCKSTICKY
 		set elapsed 0
-		set timeout 1000
-		# while {$elapsed < $timeout} {
-			# refresh_hw_device -force_poll [get_hw_devices]
-			# set locked [get_property LOGIC.RXCDRLOCKSTICKY $linkObj]
-			# if {$locked} {
-				# puts " CDR LOCKED (sticky) after $elapsed sec"
-				# return 1
-        # }
-        # after 1000
-        # incr elapsed
-    # }
-    puts "Timeout: RXCDRLOCKSTICKY never asserted"
+		set timeout 5000
+		while {$elapsed < $timeout} {
+			refresh_hw_device -force_poll [get_hw_devices]
+			set cdrlock [get_property PORT.RXCDRLOCK $linkObj]
+			if {$cdrlock} {
+				puts " CDR LOCKED after $elapsed sec"
+				#return 1
+				set elapsed 5000
+			}
+			after 500
+			incr elapsed
+		}
+    #puts "Timeout: RXCDRLOCKSTICKY never asserted"
 		
 	}
+	
+	puts "\n Checking RX activity before BER testing..."
+	foreach pair $linkObjs {
+    set lnk [lindex $pair 0]
+    set label [lindex $pair 1]
+
+    # Leitura inicial de bits recebidos
+    set bits_before [get_property RX_RECEIVED_BIT_COUNT $lnk]
+    after 2000
+    refresh_hw_device -force_poll $fpga_dev
+    # Leitura após 2 segundos
+    set bits_after [get_property RX_RECEIVED_BIT_COUNT $lnk]
+
+    # Verifica se a contagem aumentou
+	set delta [expr {$bits_after - $bits_before}]
+	if {$delta < 0} {
+		puts "⚠ Bit counter restarted (overflow)."
+		set delta [expr {(2**64) + $delta}]  ;# estimativa para wrap de 64 bits
+	}
+	
+	if {$delta > 0} {
+		puts "Active Link: increased in $delta bits ($bits_before → $bits_after)"
+	} else {
+		puts "Stopped Link: $bits_before = $bits_after"
+	}
+	}
+
+	
+	
+	
 		
-	# 4.x) Reset all link error counters before BER test
+	# 5.5) Reset all link error counters before BER test
 	puts "\nINFO: resetting error counters on all links..."
 	foreach pair $linkObjs {
 		set lnk [lindex $pair 0]
 		# assert reset
 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 1 $lnk
-		after 1000
+		after 80
 		commit_hw_sio -non_blocking $lnk
-		after 5000
+		after 80
 	}
 	# de-assert reset
 	foreach pair $linkObjs {
 		set lnk [lindex $pair 0]
 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 0 $lnk
-		after 1000
+		after 100
 		commit_hw_sio -non_blocking $lnk
-		after 5000
+		after 100
 	}
 	puts "OK: error counters cleared"
 	
@@ -418,34 +554,60 @@ foreach entry $boards {
 	set i 0
 
 
-    # 4.6) Now run BER test on each link
+    # 5.6) Now run BER test on each link
     foreach pair $linkObjs {
         set linkObj [lindex $pair 0]
         set label   [lindex $pair 1]
 		
 		set bp_path [lindex $board_labels $i]
+		
+		# # Verifica  CDR lock
+		# set cdrlock [get_property PORT.RXCDRLOCK $rxObj]
+		# if {$cdrlock != 1} {
+			# puts "⚠CDR ainda não lockado (PORT.RXCDRLOCK=$cdrlock). Pode afetar a qualidade do Eye Scan."
+		# } else {
+			# puts "CDR lock confirmado (PORT.RXCDRLOCK=1)."
+		# }
+
+		# puts " CDR Lock status: $cdrlock"
+		# if {!$cdrlock} {
+			# puts " RX não está com CDR lock. Pulando o scan."
+			# #continue
+		# }
+		
+		# Wait for stable BER and flowing bits before actual test
+		#wait_for_stable_ber $linkObj $threshold 10000
 
         puts "\nINFO: $label waiting for more than $threshold bits"
         set bits 0
 		set link_error 0
         while {$bits < $threshold} {
             refresh_hw_device -force_poll $fpga_dev
-			after 3000
+			after 50
             set bits [get_property RX_RECEIVED_BIT_COUNT $linkObj]
-            after 3000
+            after 50
         }
         refresh_hw_device -force_poll $fpga_dev
-		after 5000
+		after 50
         set ber [get_property RX_BER $linkObj]
 		set link_error [expr {$bits*$ber}]
         puts "RESULT: $serial - $bp_path -  bits=$bits   BER=$ber  ERRORS=$link_error"
+		# Determina se o link foi marcado como DISABLED
+		set status "ENABLED"
+		if {[string match "*:DISABLED" $txRaw] || [string match "*:DISABLED" $rxRaw]} {
+			set status "DISABLED"
+		}
+		puts "PYTHON_OUT: serial=$serial;link=$label;status=$status;from=$bp_path;to=$to_board;ber=$ber;errors=$link_error"
+		#puts "PYTHON_OUT: serial=$serial;link=$label;ber=$ber;errors=$link_error"
 		#puts $log_fh "$serial,$label,$ber" bp_path
 		puts $log_fh "$serial,$bp_path,$to_board,$ber,$link_error"
+		#set bits_tested [get_property RX_RECEIVED_BIT_COUNT $rxRaw]
+		#puts "\nBITS RECEIVED: $bits_tested bits"
 		
 		incr i
     }
 
-    # 2.5) Close this target before moving on
+    # 5.7) Close this target before moving on
     catch { close_hw_target }
 }
 puts $log_fh "\n=== All BER tests complete ==="

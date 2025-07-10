@@ -1,0 +1,661 @@
+#-----------------------------------------------------------
+# Vivado Lab Edition v2023.1.1 (64-bit)
+# SW Build 3900603 on Fri Jun 16 19:31:24 MDT 2023
+# 
+# 
+# Start of session at: Thu Jul 10 11:37:11 2025
+# Process ID: 3464
+# Current directory: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui
+# Command line: vivado_lab.exe -mode batch -source C:\Users\welli\AppData\Local\Temp\tmpu0_vcg6f.tcl
+# Log file: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui/vivado_lab.log
+# Journal file: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui\vivado_lab.jou
+# Running On: DESKTOP-HNI266F, OS: Windows, CPU Frequency: 1992 MHz, CPU Physical cores: 4, Host memory: 16977 MB
+#-----------------------------------------------------------
+source {C:\Users\welli\AppData\Local\Temp\tmpu0_vcg6f.tcl}
+# source "ibert_run_step2-2_EyeDiagramScan.tcl"
+## set log_file "ibert_qc_ber.log"
+## set log_fh   [open $log_file a]
+## puts $log_fh "IBERT QC BER Log"
+## puts $log_fh "Date: [clock format [clock seconds] -format {%Y-%m-%d %H:%M:%S}]"
+## puts $log_fh "Serial,from Board,to Board,BER, ERRORS"
+## set cfg_file "ibert_06252025-verification_test.txt"
+## set serial_file   "serial_numbers.txt"     
+## set max_boards 4
+## open_hw_manager
+## after 1000
+## connect_hw_server -url localhost:3121
+INFO: [Labtools 27-2285] Connecting to hw_server url TCP:localhost:3121
+INFO: [Labtools 27-2222] Launching hw_server...
+INFO: [Labtools 27-2221] Launch Output:
+ECHO est� desativado.
+ECHO est� desativado.
+
+****** Xilinx hw_server v2023.1.1
+  **** Build date : Jun 16 2023 at 19:52:37
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+
+INFO: [Labtools 27-3415] Connecting to cs_server url TCP:localhost:0
+INFO: [Labtools 27-3417] Launching cs_server...
+INFO: [Labtools 27-2221] Launch Output:
+ECHO est� desativado.
+ECHO est� desativado.
+
+
+******** Xilinx cs_server v2023.1.0
+  ****** Build date   : May 31 2023-14:31:41
+    **** Build number : 2023.1.1685557901
+      ** Copyright 2017-2022 Xilinx, Inc. All Rights Reserved.
+      ** Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+
+
+
+connect_hw_server: Time (s): cpu = 00:00:00 ; elapsed = 00:00:17 . Memory (MB): peak = 227.461 ; gain = 0.000
+## set boards {}
+## set fp [open $cfg_file r]
+## foreach line [split [read $fp] "\n"] {
+##     set ltrim [string trim $line]
+##     if {$ltrim eq "" || [string index $ltrim 0] == "#"} continue
+##     lappend boards $ltrim
+##     if {[llength $boards] >= $max_boards} { break }
+## }
+## if {[llength $boards] == 0} {
+##     puts "ERROR: no valid board entries in $cfg_file"; exit 1
+## }
+## set serial_ns {}
+## set fs [open $serial_file r]
+## foreach line [split [read $fs] "\n"] {
+##     set ltrim [string trim $line]
+##     if {$ltrim eq "" || [string index $ltrim 0] == "#"} continue
+##     lappend serial_ns $ltrim
+##     if {[llength $serial_ns] >= $max_boards} { break }
+## }
+## close $fs
+## if {[llength $serial_ns] == 0} {
+##     puts "ERROR: no valid serial number entries in $serial_file"; exit 1
+## }
+## set all_tests {}
+## set slt 0
+## foreach entry $boards {
+##     # parse exactly as in Phase 1
+##     set parts     [split $entry ","]
+## 	set to_board  [lindex $parts 0]
+## 	set serial [lindex $serial_ns $slt]
+##     #set serial    [lindex $parts 1]
+##     set threshold [expr {[lindex $parts 3]}]
+## 	set paths     [lrange $parts 4 6]
+##     set links     [lrange $parts 7 end]
+## 
+##     puts "\n=== BER Test for board #$slt: $serial ==="
+## 
+##     # 2.1) Switch & open the correct target
+##     catch { close_hw_target }
+## 	# set retries 0
+## 	# while {[llength [get_hw_targets -filter {IS_OPEN==true}]] != 0 && $retries < 5} {
+## 			# after 1000
+## 			# incr retries
+## 		# }
+## 	after 5000
+## 	catch { disconnect_hw_server }
+## 	after 5000
+## 	connect_hw_server -url localhost:3121
+## 	after 5000
+##     foreach t [get_hw_targets] {
+##         if {[lindex [split [get_property UID $t] "/"] end] eq $serial} {
+##             current_hw_target $t
+## 			after 3000
+##             if {[catch { open_hw_target } err]} {
+##                 puts "ERROR opening target $serial: $err"
+##                 continue 2
+##             }
+##             break
+##         }
+##     }
+## 	incr slt
+## 
+##     # 2.2) Locate and refresh the FPGA device
+##     set fpga_dev [lindex [get_hw_devices -of_objects $t] 0]
+## 	#after 500
+##     refresh_hw_device -force_poll $fpga_dev
+## 	after 3000
+## 	
+## 	
+## 	# --- Novo: Apaga links existentes antes de criar os novos ---
+## 	puts " Cleaning old existent links in the device..."
+## 	set existing_links [get_hw_sio_links -of_objects $fpga_dev]
+## 	if {[llength $existing_links] > 0} {
+## 		foreach lnk $existing_links {
+## 			delete_hw_sio_link $lnk
+## 			after 5000
+## 		}
+## 		commit_hw_sio -non_blocking $existing_links
+## 		after 5000
+## 	} else {
+## 		puts "ℹ️  No existing links found to delete."
+## 	}
+## 	after 5000
+## 
+##     # 2.3) Grab raw TX/RX endpoints
+##     set txs [get_hw_sio_txs -of_objects $fpga_dev]
+## 	after 3000
+##     set rxs [get_hw_sio_rxs -of_objects $fpga_dev]
+## 	after 3000
+## 
+##     # 2.4) For each link in the CSV, rebuild & test it
+## 	set linkObjs {}                   ;# initialize
+##     for {set i 0} {$i < [llength $links]} {incr i 2} {
+##         #set txName [lindex $links $i]
+##         #set rxName [lindex $links [expr {$i+1}]]
+## 		
+## 		# --- Novo bloco para tratamento de ENABLED/DISABLED ---
+## 		set txRaw [lindex $links $i]
+## 		set rxRaw [lindex $links [expr {$i+1}]]
+## 
+## 		# Ignora o par se qualquer um dos dois estiver marcado como :DISABLED
+## 		if {[string match "*:DISABLED" $txRaw] || [string match "*:DISABLED" $rxRaw]} {
+## 			puts "🔕 Skipping link (DISABLED): $txRaw ↔ $rxRaw"
+## 			continue
+## 		}
+## 
+## 		# Extrai apenas o nome base do TX/RX (removendo :ENABLED ou :DISABLED)
+## 		set txName [lindex [split $txRaw ":"] 0]
+## 		set rxName [lindex [split $rxRaw ":"] 0]
+## 		# --- Novo bloco para tratamento de ENABLED/DISABLED ---
+## 		
+## 
+##         # find the two endpoint objects by suffix match
+##         set txObj ""; foreach x $txs {
+##             if {[string match "*$txName" [get_property NAME $x]]} { set txObj $x; break }
+##         }
+##         set rxObj ""; foreach x $rxs {
+##             if {[string match "*$rxName" [get_property NAME $x]]} { set rxObj $x; break }
+##         }
+##         if {$txObj eq "" || $rxObj eq ""} {
+##             puts "WARN: Could not find endpoints $txName/$rxName"
+##             continue
+##         }
+## 
+##         # 2.4.1) Re-create the SIO link & arm PRBS31
+##         set linkObj [create_hw_sio_link $txObj $rxObj]
+##         commit_hw_sio   $linkObj
+## 		after 5000
+## 				
+## 		# Set PRBS pattern
+## 		#set_property TX_PATTERN {PRBS 7-bit} $linkObj
+##         #set_property RX_PATTERN {PRBS 7-bit} $linkObj
+## 		#set_property TX_PATTERN {PRBS 15-bit} $linkObj
+##         #set_property RX_PATTERN {PRBS 15-bit} $linkObj
+## 		#set_property TX_PATTERN {PRBS 23-bit} $linkObj
+##         #set_property RX_PATTERN {PRBS 23-bit} $linkObj
+##         set_property TX_PATTERN {PRBS 31-bit} $linkObj
+##         set_property RX_PATTERN {PRBS 31-bit} $linkObj
+## 		after 5000
+## 		
+## 		
+## 		# half data rate = 12.5 GHz
+## 		#set_property TX_PATTERN {Fast Clk} $linkObj     
+## 		#set_property RX_PATTERN {Fast Clk} $linkObj    
+## 		# quarter data rate = 6.25 GHz		
+## 		#set_property TX_PATTERN {Slow Clk} $linkObj  
+## 		#set_property RX_PATTERN {Slow Clk} $linkObj
+## 
+## 		
+## 		# Additional signal integrity settings
+## 		#set_property TXPRE {3.90 dB (01111)} $linkObj
+## 		set_property TXPRE {1.87 dB (01000)} $linkObj
+## 		#set_property TXPRE {0.01 dB (00000)} $linkObj
+## 		after 5000		
+## 		#set_property TXPOST {3.99 dB (01111)} $linkObj
+## 		set_property TXPOST {2.98 dB (01011)} $linkObj
+## 		#set_property TXPOST {0.00 dB (00000)} $linkO
+## 		after 5000
+## 		#set_property TXDIFFSWING {730 mV (01101)} $linkObj
+## 		set_property TXDIFFSWING {780 mV (10000)} $linkObj
+## 		#set_property TXDIFFSWING {390 mV (00000)} $linkObj
+## 		after 5000
+## 
+## 		
+## 		# Commit settings (non-blocking commit is acceptable here)
+##         commit_hw_sio -non_blocking $linkObj
+## 		after 3000
+## 		
+## 		# record the link object and a label
+##         #lappend linkObjs [list $linkObj "$txName->$rxName"]
+## 		lappend linkObjs [list $linkObj "$txName->$rxName" $rxObj]
+## 
+##         # cleanup txObj/rxObj for next iteration
+##         unset txObj rxObj
+## 		after 200
+## 		
+## 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 1 $linkObj
+## 		commit_hw_sio -non_blocking $linkObj
+## 		after 3000
+## 		
+## 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 0 $linkObj
+## 		commit_hw_sio -non_blocking $linkObj
+## 		after 3000
+## 		
+## 		# Poll RXCDRLOCKSTICKY
+## 		set elapsed 0
+## 		set timeout 1000
+## 		# while {$elapsed < $timeout} {
+## 			# refresh_hw_device -force_poll [get_hw_devices]
+## 			# set locked [get_property LOGIC.RXCDRLOCKSTICKY $linkObj]
+## 			# if {$locked} {
+## 				# puts " CDR LOCKED (sticky) after $elapsed sec"
+## 				# return 1
+##         # }
+##         # after 1000
+##         # incr elapsed
+##     # }
+##     #puts "Timeout: RXCDRLOCKSTICKY never asserted"
+## 		
+## 	}
+## 	
+## 	puts "\n Verificando atividade de RX antes do teste BER..."
+## 	foreach pair $linkObjs {
+## 		set lnk [lindex $pair 0]
+## 		set label [lindex $pair 1]
+## 
+## 		# Leitura inicial de bits recebidos
+## 		set bits_before [get_property RX_RECEIVED_BIT_COUNT $lnk]
+## 		after 3000
+## 		refresh_hw_device -force_poll $fpga_dev
+## 		# Leitura após 2 segundos
+## 		set bits_after [get_property RX_RECEIVED_BIT_COUNT $lnk]
+## 
+## 		# Verifica se a contagem aumentou
+## 		set delta [expr {$bits_after - $bits_before}]
+## 		if {$delta < 0} {
+## 			puts "⚠ Contador de bits reiniciou (overflow)."
+## 		set delta [expr {(2**64) + $delta}]  ;# estimativa para wrap de 64 bits
+## 	}
+## 	
+## 	if {$delta > 0} {
+## 		puts "Link ativo: aumentou em $delta bits ($bits_before → $bits_after)"
+## 	} else {
+## 		puts "Link parado: $bits_before = $bits_after"
+## 	}
+## 	}
+## 
+## 	
+## 	# 4.x) Reset all link error counters before BER test
+## 	puts "\nINFO: resetting error counters on all links..."
+## 	foreach pair $linkObjs {
+## 		set lnk [lindex $pair 0]
+## 		# assert reset
+## 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 1 $lnk
+## 		after 3000
+## 		commit_hw_sio -non_blocking $lnk
+## 		after 5000
+## 	}
+## 	# de-assert reset
+## 	foreach pair $linkObjs {
+## 		set lnk [lindex $pair 0]
+## 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 0 $lnk
+## 		after 5000
+## 		commit_hw_sio -non_blocking $lnk
+## 		after 5000
+## 	}
+## 	puts "OK: error counters cleared"
+## 	
+## 	set paths [lrange $parts 4 6]
+## 	set from_board1 [lindex $paths 0]
+## 	set from_board2 [lindex $paths 1]
+## 	set from_board3 [lindex $paths 2]
+## 	
+## 	set board_labels [list $from_board1 $from_board2 $from_board3]
+## 	set i 0
+## 
+## 
+## 	# 4.6) Eye Scan para cada link válido
+## 	foreach pair $linkObjs {
+## 		set linkObj [lindex $pair 0]
+## 		set label   [lindex $pair 1]
+## 		set rxObj   [lindex $pair 2]
+## 		
+## 		puts "\n📡 Eye Scan: $label"
+## 		
+## 		# Verifica  CDR lock
+## 		set cdrlock [get_property PORT.RXCDRLOCK $rxObj]
+## 		if {$cdrlock != 1} {
+## 			puts "⚠CDR ainda não lockado (PORT.RXCDRLOCK=$cdrlock). Pode afetar a qualidade do Eye Scan."
+## 		} else {
+## 			puts "CDR lock confirmado (PORT.RXCDRLOCK=1)."
+## 		}
+## 
+## 		puts " CDR Lock status: $cdrlock"
+## 		if {!$cdrlock} {
+## 			puts " RX não está com CDR lock. Pulando o scan."
+## 			#continue
+## 		}
+## 
+## 		refresh_hw_device -force_poll $fpga_dev
+## 		after 5000
+## 
+## 		# Cria o objeto de Eye Scan
+## 		set scan [create_hw_sio_scan -description "Eye Scan $label" 2d_full_eye $linkObj]
+## 		after 3000
+## 		set_property HORIZONTAL_INCREMENT 1 $scan
+## 		set_property VERTICAL_INCREMENT 1 $scan
+## 		set_property DWELL_BER 1e-5 $scan
+## 
+## 		# Executa o scan
+## 		run_hw_sio_scan $scan
+## 		puts " Aguardando finalização do Eye Scan..."
+## 		wait_on_hw_sio_scan $scan
+## 		puts " Scan finalizado."
+## 		
+## 
+## 		# Verifica se finalizou corretamente
+## 		set status [get_property STATUS $scan]
+## 		if {$status eq "Done"} {
+## 			# Gera o nome do arquivo limpo
+## 			# Limpeza de caracteres especiais
+## 			set clean_label [string map {"/" "_" ">" "_" ":" "_" " " "_" "\\" "_" "|" "_" "?" "_" "*" "_" "\"" "_" "<" "_" ">" "_"} $label]
+## 			set clean_from1 [string map {"/" "_" ">" "_" ":" "_" " " "_" "\\" "_" "|" "_" "?" "_" "*" "_" "\"" "_" "<" "_" ">" "_"} $from_board1]
+## 			set clean_from2 [string map {"/" "_" ">" "_" ":" "_" " " "_" "\\" "_" "|" "_" "?" "_" "*" "_" "\"" "_" "<" "_" ">" "_"} $from_board2]
+## 			set clean_from3 [string map {"/" "_" ">" "_" ":" "_" " " "_" "\\" "_" "|" "_" "?" "_" "*" "_" "\"" "_" "<" "_" ">" "_"} $from_board3]
+## 			set clean_to    [string map {"/" "_" ">" "_" ":" "_" " " "_" "\\" "_" "|" "_" "?" "_" "*" "_" "\"" "_" "<" "_" ">" "_"} $to_board]
+## 
+## 			# Monta nome do arquivo limpo
+## 			set fname "scan_${serial}_from_${clean_from1}-${clean_from2}-${clean_from3}_to_${clean_to}_${clean_label}.csv"
+## 
+## 			
+## 			# Exporta usando o método da GUI
+## 			write_hw_sio_scan -force $fname $scan
+## 			puts "📁 Exported Eye Scan report to $fname"
+## 			puts $log_fh "SCAN FILE: $fname for $label"
+## 
+## 		}
+## 		
+## 		# Mover o else para cá com verificação explícita
+## 		if {$status ne "Done"} {
+## 			puts "⚠️ Eye scan $label não finalizado com sucesso (STATUS=$status)"
+## 		}
+## 
+## 		# Opcional: remover o scan após exportar
+## 		# delete_hw_sio_scan $scan
+## 	}
+## 
+##     # 2.5) Close this target before moving on
+##     catch { close_hw_target }
+## }
+
+=== BER Test for board #0: 00038A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00038A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/00038A is already closed
+INFO: [Labtools 27-2285] Connecting to hw_server url TCP:localhost:3121
+INFO: [Labtools 27-3415] Connecting to cs_server url TCP:localhost:0
+INFO: [Labtools 27-3417] Launching cs_server...
+INFO: [Labtools 27-2221] Launch Output:
+ECHO est� desativado.
+ECHO est� desativado.
+
+
+******** Xilinx cs_server v2023.1.0
+  ****** Build date   : May 31 2023-14:31:41
+    **** Build number : 2023.1.1685557901
+      ** Copyright 2017-2022 Xilinx, Inc. All Rights Reserved.
+      ** Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+
+
+
+connect_hw_server: Time (s): cpu = 00:00:00 ; elapsed = 00:00:05 . Memory (MB): peak = 227.461 ; gain = 0.000
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/00038A
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+ℹ️  No existing links found to delete.
+
+ Verificando atividade de RX antes do teste BER...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+⚠ Contador de bits reiniciou (overflow).
+Link ativo: aumentou em 18446739822850592576 bits (6134938062800 → 1884079103760)
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link ativo: aumentou em 105234274960 bits (1026443472560 → 1131677747520)
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link ativo: aumentou em 102745273760 bits (270592998480 → 373338272240)
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+
+📡 Eye Scan: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX
+CDR lock confirmado (PORT.RXCDRLOCK=1).
+ CDR Lock status: 1
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Aguardando finalização do Eye Scan...
+wait_on_hw_sio_scan: Time (s): cpu = 00:00:00 ; elapsed = 00:00:37 . Memory (MB): peak = 328.547 ; gain = 4.098
+ Scan finalizado.
+📁 Exported Eye Scan report to scan_00038A_from_slot1--_-slot2--_-slot3--__to_slot0_Quad_131_MGT_X0Y18_TX-_Quad_131_MGT_X0Y18_RX.csv
+
+📡 Eye Scan: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX
+CDR lock confirmado (PORT.RXCDRLOCK=1).
+ CDR Lock status: 1
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Aguardando finalização do Eye Scan...
+wait_on_hw_sio_scan: Time (s): cpu = 00:00:00 ; elapsed = 00:00:38 . Memory (MB): peak = 333.594 ; gain = 4.422
+ Scan finalizado.
+📁 Exported Eye Scan report to scan_00038A_from_slot1--_-slot2--_-slot3--__to_slot0_Quad_131_MGT_X0Y16_TX-_Quad_131_MGT_X0Y16_RX.csv
+
+📡 Eye Scan: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX
+CDR lock confirmado (PORT.RXCDRLOCK=1).
+ CDR Lock status: 1
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Aguardando finalização do Eye Scan...
+wait_on_hw_sio_scan: Time (s): cpu = 00:00:01 ; elapsed = 00:00:38 . Memory (MB): peak = 338.352 ; gain = 4.270
+ Scan finalizado.
+📁 Exported Eye Scan report to scan_00038A_from_slot1--_-slot2--_-slot3--__to_slot0_Quad_130_MGT_X0Y14_TX-_Quad_130_MGT_X0Y14_RX.csv
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00038A
+
+=== BER Test for board #1: 000040A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00038A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/00038A is already closed
+INFO: [Labtools 27-2285] Connecting to hw_server url TCP:localhost:3121
+INFO: [Labtools 27-3415] Connecting to cs_server url TCP:localhost:0
+INFO: [Labtools 27-3417] Launching cs_server...
+INFO: [Labtools 27-2221] Launch Output:
+ECHO est� desativado.
+ECHO est� desativado.
+
+
+******** Xilinx cs_server v2023.1.0
+  ****** Build date   : May 31 2023-14:31:41
+    **** Build number : 2023.1.1685557901
+      ** Copyright 2017-2022 Xilinx, Inc. All Rights Reserved.
+      ** Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+
+
+
+connect_hw_server: Time (s): cpu = 00:00:00 ; elapsed = 00:00:07 . Memory (MB): peak = 338.352 ; gain = 0.000
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/000040A
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+ℹ️  No existing links found to delete.
+
+ Verificando atividade de RX antes do teste BER...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+⚠ Contador de bits reiniciou (overflow).
+Link ativo: aumentou em 18446731876061565056 bits (14082474674160 → 1884826687600)
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link ativo: aumentou em 103997310960 bits (1026082813920 → 1130080124880)
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link ativo: aumentou em 103732476240 bits (268333309920 → 372065786160)
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+
+📡 Eye Scan: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX
+CDR lock confirmado (PORT.RXCDRLOCK=1).
+ CDR Lock status: 1
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Aguardando finalização do Eye Scan...
+wait_on_hw_sio_scan: Time (s): cpu = 00:00:00 ; elapsed = 00:00:37 . Memory (MB): peak = 395.555 ; gain = 4.445
+ Scan finalizado.
+📁 Exported Eye Scan report to scan_000040A_from_slot0--_-slot2--_-slot3--__to_slot1_Quad_131_MGT_X0Y18_TX-_Quad_131_MGT_X0Y18_RX.csv
+
+📡 Eye Scan: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX
+CDR lock confirmado (PORT.RXCDRLOCK=1).
+ CDR Lock status: 1
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Aguardando finalização do Eye Scan...
+wait_on_hw_sio_scan: Time (s): cpu = 00:00:00 ; elapsed = 00:00:37 . Memory (MB): peak = 400.176 ; gain = 4.242
+ Scan finalizado.
+📁 Exported Eye Scan report to scan_000040A_from_slot0--_-slot2--_-slot3--__to_slot1_Quad_131_MGT_X0Y16_TX-_Quad_131_MGT_X0Y16_RX.csv
+
+📡 Eye Scan: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX
+CDR lock confirmado (PORT.RXCDRLOCK=1).
+ CDR Lock status: 1
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Aguardando finalização do Eye Scan...
+wait_on_hw_sio_scan: Time (s): cpu = 00:00:00 ; elapsed = 00:01:37 . Memory (MB): peak = 404.234 ; gain = 3.691
+ Scan finalizado.
+📁 Exported Eye Scan report to scan_000040A_from_slot0--_-slot2--_-slot3--__to_slot1_Quad_130_MGT_X0Y14_TX-_Quad_130_MGT_X0Y14_RX.csv
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/000040A
+
+=== BER Test for board #2: 000047A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/000040A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/000040A is already closed
+INFO: [Labtools 27-2285] Connecting to hw_server url TCP:localhost:3121
+INFO: [Labtools 27-3415] Connecting to cs_server url TCP:localhost:0
+INFO: [Labtools 27-3417] Launching cs_server...
+INFO: [Labtools 27-2221] Launch Output:
+ECHO est� desativado.
+ECHO est� desativado.
+
+
+******** Xilinx cs_server v2023.1.0
+  ****** Build date   : May 31 2023-14:31:41
+    **** Build number : 2023.1.1685557901
+      ** Copyright 2017-2022 Xilinx, Inc. All Rights Reserved.
+      ** Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+
+
+
+connect_hw_server: Time (s): cpu = 00:00:00 ; elapsed = 00:00:07 . Memory (MB): peak = 404.234 ; gain = 0.000
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/000047A
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+ℹ️  No existing links found to delete.
+
+ Verificando atividade de RX antes do teste BER...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+⚠ Contador de bits reiniciou (overflow).
+Link ativo: aumentou em 18446722467244134976 bits (23491324853280 → 1884859436640)
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link ativo: aumentou em 103146851120 bits (1026773969760 → 1129920820880)
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link ativo: aumentou em 105096367360 bits (267474085200 → 372570452560)
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+
+📡 Eye Scan: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX
+CDR lock confirmado (PORT.RXCDRLOCK=1).
+ CDR Lock status: 1
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Aguardando finalização do Eye Scan...
+wait_on_hw_sio_scan: Time (s): cpu = 00:00:01 ; elapsed = 00:00:37 . Memory (MB): peak = 454.523 ; gain = 3.746
+ Scan finalizado.
+📁 Exported Eye Scan report to scan_000047A_from_slot0--_-slot1--_-slot3--__to_slot2_Quad_131_MGT_X0Y18_TX-_Quad_131_MGT_X0Y18_RX.csv
+
+📡 Eye Scan: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX
+CDR lock confirmado (PORT.RXCDRLOCK=1).
+ CDR Lock status: 1
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Aguardando finalização do Eye Scan...
+wait_on_hw_sio_scan: Time (s): cpu = 00:00:00 ; elapsed = 00:00:38 . Memory (MB): peak = 459.453 ; gain = 3.895
+ Scan finalizado.
+📁 Exported Eye Scan report to scan_000047A_from_slot0--_-slot1--_-slot3--__to_slot2_Quad_131_MGT_X0Y16_TX-_Quad_131_MGT_X0Y16_RX.csv
+
+📡 Eye Scan: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX
+CDR lock confirmado (PORT.RXCDRLOCK=1).
+ CDR Lock status: 1
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Aguardando finalização do Eye Scan...
+wait_on_hw_sio_scan: Time (s): cpu = 00:00:01 ; elapsed = 00:00:38 . Memory (MB): peak = 464.340 ; gain = 4.277
+ Scan finalizado.
+📁 Exported Eye Scan report to scan_000047A_from_slot0--_-slot1--_-slot3--__to_slot2_Quad_130_MGT_X0Y14_TX-_Quad_130_MGT_X0Y14_RX.csv
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/000047A
+
+=== BER Test for board #3: 000043A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/000047A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/000047A is already closed
+INFO: [Labtools 27-2285] Connecting to hw_server url TCP:localhost:3121
+INFO: [Labtools 27-3415] Connecting to cs_server url TCP:localhost:0
+INFO: [Labtools 27-3417] Launching cs_server...
+INFO: [Labtools 27-2221] Launch Output:
+ECHO est� desativado.
+ECHO est� desativado.
+
+
+******** Xilinx cs_server v2023.1.0
+  ****** Build date   : May 31 2023-14:31:41
+    **** Build number : 2023.1.1685557901
+      ** Copyright 2017-2022 Xilinx, Inc. All Rights Reserved.
+      ** Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+
+
+
+connect_hw_server: Time (s): cpu = 00:00:00 ; elapsed = 00:00:06 . Memory (MB): peak = 464.340 ; gain = 0.000
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/000043A
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+ℹ️  No existing links found to delete.
+
+ Verificando atividade de RX antes do teste BER...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+⚠ Contador de bits reiniciou (overflow).
+Link ativo: aumentou em 18446714550243387216 bits (31410537058000 → 1887070893600)
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link ativo: aumentou em 104733874240 bits (1029108875280 → 1133842749520)
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link ativo: aumentou em 104337060400 bits (272207253840 → 376544314240)
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+
+📡 Eye Scan: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX
+CDR lock confirmado (PORT.RXCDRLOCK=1).
+ CDR Lock status: 1
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Aguardando finalização do Eye Scan...
+wait_on_hw_sio_scan: Time (s): cpu = 00:00:00 ; elapsed = 00:00:37 . Memory (MB): peak = 514.387 ; gain = 3.336
+ Scan finalizado.
+📁 Exported Eye Scan report to scan_000043A_from_slot0--_-slot1--_-slot2--__to_slot3_Quad_131_MGT_X0Y18_TX-_Quad_131_MGT_X0Y18_RX.csv
+
+📡 Eye Scan: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX
+CDR lock confirmado (PORT.RXCDRLOCK=1).
+ CDR Lock status: 1
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Aguardando finalização do Eye Scan...
+wait_on_hw_sio_scan: Time (s): cpu = 00:00:01 ; elapsed = 00:00:37 . Memory (MB): peak = 518.133 ; gain = 3.746
+ Scan finalizado.
+📁 Exported Eye Scan report to scan_000043A_from_slot0--_-slot1--_-slot2--__to_slot3_Quad_131_MGT_X0Y16_TX-_Quad_131_MGT_X0Y16_RX.csv
+
+📡 Eye Scan: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX
+CDR lock confirmado (PORT.RXCDRLOCK=1).
+ CDR Lock status: 1
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ Aguardando finalização do Eye Scan...
+wait_on_hw_sio_scan: Time (s): cpu = 00:00:00 ; elapsed = 00:00:38 . Memory (MB): peak = 522.992 ; gain = 4.230
+ Scan finalizado.
+📁 Exported Eye Scan report to scan_000043A_from_slot0--_-slot1--_-slot2--__to_slot3_Quad_130_MGT_X0Y14_TX-_Quad_130_MGT_X0Y14_RX.csv
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/000043A
+## puts $log_fh "\n=== All eye Diagrams complete ==="
+## puts $log_fh ""
+## puts "\n=== All eye diagrams complete ==="
+
+=== All eye diagrams complete ===
+## close $log_fh
+## puts "Wrote BER results to $log_file"
+Wrote BER results to ibert_qc_ber.log
+## close_hw_manager
+## puts "\nAll done. Processed [llength $boards] boards, [llength $all_tests] links."
+
+All done. Processed 4 boards, 0 links.
+## exit 0
+INFO: [Common 17-206] Exiting vivado_lab at Thu Jul 10 12:01:59 2025...

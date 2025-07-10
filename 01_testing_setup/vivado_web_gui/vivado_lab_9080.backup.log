@@ -1,0 +1,80 @@
+#-----------------------------------------------------------
+# Vivado Lab Edition v2023.1.1 (64-bit)
+# SW Build 3900603 on Fri Jun 16 19:31:24 MDT 2023
+# 
+# 
+# Start of session at: Thu Jul 10 12:03:52 2025
+# Process ID: 9080
+# Current directory: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui
+# Command line: vivado_lab.exe -mode batch -source C:\Users\welli\AppData\Local\Temp\tmpfija3gal.tcl
+# Log file: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui/vivado_lab.log
+# Journal file: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui\vivado_lab.jou
+# Running On: DESKTOP-HNI266F, OS: Windows, CPU Frequency: 1992 MHz, CPU Physical cores: 4, Host memory: 16977 MB
+#-----------------------------------------------------------
+source {C:\Users\welli\AppData\Local\Temp\tmpfija3gal.tcl}
+# source "print_latest_ber_results.tcl"
+## set log_file "ibert_qc_ber.log"
+## if {![file exists $log_file]} {
+##     puts "ERROR: File '$log_file' not found."
+##     exit 1
+## }
+## set fh [open $log_file r]
+## set lines [split [read $fh] "\n"]
+## close $fh
+## set starts {}
+## for {set i 0} {$i < [llength $lines]} {incr i} {
+##     if {[string match "IBERT QC BER Log*" [lindex $lines $i]]} {
+##         lappend starts $i
+##     }
+## }
+## if {[llength $starts] == 0} {
+##     puts "No block found in log."
+##     exit 0
+## }
+## set start_idx [lindex $starts end]
+## set block [lrange $lines $start_idx end]
+## set header_line ""
+## set data_lines {}
+## foreach line $block {
+##     if {[string match "Serial,*" $line]} {
+##         set header_line $line
+##         continue
+##     }
+##     if {[string match "===*" $line] || $line eq ""} {
+##         break
+##     }
+##     if {$header_line ne ""} {
+##         lappend data_lines $line
+##     }
+## }
+## if {$header_line eq "" || [llength $data_lines] == 0} {
+##     puts "Block found, but no data available."
+##     exit 0
+## }
+## puts "\n Lastest BER Results:"
+
+ Lastest BER Results:
+## puts "---------------------------"
+---------------------------
+## puts $header_line
+Serial,from Board,to Board,BER, ERRORS
+## foreach line $data_lines {
+##     puts $line
+## }
+SCAN FILE: scan_00038A_from_slot1--_-slot2--_-slot3--__to_slot0_Quad_131_MGT_X0Y18_TX-_Quad_131_MGT_X0Y18_RX.csv for Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX
+SCAN FILE: scan_00038A_from_slot1--_-slot2--_-slot3--__to_slot0_Quad_131_MGT_X0Y16_TX-_Quad_131_MGT_X0Y16_RX.csv for Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX
+SCAN FILE: scan_00038A_from_slot1--_-slot2--_-slot3--__to_slot0_Quad_130_MGT_X0Y14_TX-_Quad_130_MGT_X0Y14_RX.csv for Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX
+SCAN FILE: scan_000040A_from_slot0--_-slot2--_-slot3--__to_slot1_Quad_131_MGT_X0Y18_TX-_Quad_131_MGT_X0Y18_RX.csv for Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX
+SCAN FILE: scan_000040A_from_slot0--_-slot2--_-slot3--__to_slot1_Quad_131_MGT_X0Y16_TX-_Quad_131_MGT_X0Y16_RX.csv for Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX
+SCAN FILE: scan_000040A_from_slot0--_-slot2--_-slot3--__to_slot1_Quad_130_MGT_X0Y14_TX-_Quad_130_MGT_X0Y14_RX.csv for Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX
+SCAN FILE: scan_000047A_from_slot0--_-slot1--_-slot3--__to_slot2_Quad_131_MGT_X0Y18_TX-_Quad_131_MGT_X0Y18_RX.csv for Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX
+SCAN FILE: scan_000047A_from_slot0--_-slot1--_-slot3--__to_slot2_Quad_131_MGT_X0Y16_TX-_Quad_131_MGT_X0Y16_RX.csv for Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX
+SCAN FILE: scan_000047A_from_slot0--_-slot1--_-slot3--__to_slot2_Quad_130_MGT_X0Y14_TX-_Quad_130_MGT_X0Y14_RX.csv for Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX
+SCAN FILE: scan_000043A_from_slot0--_-slot1--_-slot2--__to_slot3_Quad_131_MGT_X0Y18_TX-_Quad_131_MGT_X0Y18_RX.csv for Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX
+SCAN FILE: scan_000043A_from_slot0--_-slot1--_-slot2--__to_slot3_Quad_131_MGT_X0Y16_TX-_Quad_131_MGT_X0Y16_RX.csv for Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX
+SCAN FILE: scan_000043A_from_slot0--_-slot1--_-slot2--__to_slot3_Quad_130_MGT_X0Y14_TX-_Quad_130_MGT_X0Y14_RX.csv for Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX
+## puts "---------------------------"
+---------------------------
+## puts "Shown Lines: [llength $data_lines]"
+Shown Lines: 12
+INFO: [Common 17-206] Exiting vivado_lab at Thu Jul 10 12:03:53 2025...

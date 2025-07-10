@@ -1,0 +1,127 @@
+#-----------------------------------------------------------
+# Vivado Lab Edition v2023.1.1 (64-bit)
+# SW Build 3900603 on Fri Jun 16 19:31:24 MDT 2023
+# 
+# 
+# Start of session at: Thu Jul 10 11:30:13 2025
+# Process ID: 13056
+# Current directory: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui
+# Command line: vivado_lab.exe -mode batch -source C:\Users\welli\AppData\Local\Temp\tmpisutft_e.tcl
+# Log file: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui/vivado_lab.log
+# Journal file: G:/IBERT_CRS_Boards/02_software/01_python_code/QC_GUI/vivado_web_gui\vivado_lab.jou
+# Running On: DESKTOP-HNI266F, OS: Windows, CPU Frequency: 1992 MHz, CPU Physical cores: 4, Host memory: 16977 MB
+#-----------------------------------------------------------
+source {C:\Users\welli\AppData\Local\Temp\tmpisutft_e.tcl}
+# source "ibert_run_step0_setup.tcl"
+## set log_file "ibert_qc_ber.log"
+## set log_fh   [open $log_file a]
+## puts $log_fh "IBERT QC BER Log"
+## puts $log_fh "Date: [clock format [clock seconds] -format {%Y-%m-%d %H:%M:%S}]"
+## puts $log_fh "Serial,from Board,to Board,BER, ERRORS"
+## set cfg_file "ibert_06252025-verification_test.txt"
+## set serial_file   "serial_numbers.txt"     
+## set max_boards 4
+## set vivado_exe [file normalize [info nameofexecutable]]
+## set dir         [file dirname $vivado_exe]
+## set triedPaths  {}
+## set hw_server_bat ""
+## while {1} {
+##     set candidate [file join $dir bin hw_server.bat]
+##     lappend triedPaths $candidate
+##     if {[file exists $candidate]} {
+##         set hw_server_bat $candidate
+##         break
+##     }
+##     set parent [file dirname $dir]
+##     if {$parent eq $dir} break
+##     set dir $parent
+## }
+## puts "\nDEBUG: vivado.exe = $vivado_exe"
+
+DEBUG: vivado.exe = D:/Xilinx/Vivado_Lab/2023.1.1/bin/unwrapped/win64.o/vivado_lab.exe
+## puts "DEBUG: tried for hw_server.bat:"
+DEBUG: tried for hw_server.bat:
+## foreach p $triedPaths { puts "  $p" }
+  D:/Xilinx/Vivado_Lab/2023.1.1/bin/unwrapped/win64.o/bin/hw_server.bat
+  D:/Xilinx/Vivado_Lab/2023.1.1/bin/unwrapped/bin/hw_server.bat
+  D:/Xilinx/Vivado_Lab/2023.1.1/bin/bin/hw_server.bat
+  D:/Xilinx/Vivado_Lab/2023.1.1/bin/hw_server.bat
+## if {$hw_server_bat eq ""} {
+##     set fallback "D:/Xilinx/Vivado_Lab/2023.1.1/bin/hw_server.bat"
+## 	# in linux: set fallback "home/Xilinx/Vivado/2024.2/lab/bin/hw_server"
+##     puts "WARN: auto-detect failed, falling back to $fallback"
+##     if {[file exists $fallback]} {
+##         set hw_server_bat $fallback
+##     } else {
+##         puts "ERROR: hw_server.bat not found"; exit 1
+##     }
+## }
+## set hw_server_log [file join [file dirname $hw_server_bat] hw_server_debug.log]
+## puts "INFO: launching hw_server â†’ $hw_server_bat"
+INFO: launching hw_server â†’ D:/Xilinx/Vivado_Lab/2023.1.1/bin/hw_server.bat
+## if {[catch {
+##     exec cmd.exe /C start "" "\"$hw_server_bat\"" -d "$hw_server_log"
+## } err]} {
+##     puts "WARN: cannot launch hw_server: $err"
+## } else {
+##     puts "OK: hw_server launched (logâ†’$hw_server_log)"
+## }
+WARN: cannot launch hw_server: O sistema nÆo pode encontrar o arquivo \D:/Xilinx/Vivado_Lab/2023.1.1/bin/hw_server.bat\.
+## after 2000
+## open_hw_manager
+## after 1000
+## connect_hw_server -url localhost:3121
+INFO: [Labtools 27-2285] Connecting to hw_server url TCP:localhost:3121
+INFO: [Labtools 27-2222] Launching hw_server...
+INFO: [Labtools 27-2221] Launch Output:
+ECHO est  desativado.
+ECHO est  desativado.
+
+****** Xilinx hw_server v2023.1.1
+  **** Build date : Jun 16 2023 at 19:52:37
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+
+INFO: [Labtools 27-3415] Connecting to cs_server url TCP:localhost:0
+INFO: [Labtools 27-3417] Launching cs_server...
+INFO: [Labtools 27-2221] Launch Output:
+ECHO est  desativado.
+ECHO est  desativado.
+
+
+******** Xilinx cs_server v2023.1.0
+  ****** Build date   : May 31 2023-14:31:41
+    **** Build number : 2023.1.1685557901
+      ** Copyright 2017-2022 Xilinx, Inc. All Rights Reserved.
+      ** Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+
+
+
+connect_hw_server: Time (s): cpu = 00:00:00 ; elapsed = 00:00:16 . Memory (MB): peak = 227.152 ; gain = 0.000
+## after 1000
+## set boards {}
+## set fp [open $cfg_file r]
+## foreach line [split [read $fp] "\n"] {
+##     set ltrim [string trim $line]
+##     if {$ltrim eq "" || [string index $ltrim 0] == "#"} continue
+##     lappend boards $ltrim
+##     if {[llength $boards] >= $max_boards} { break }
+## }
+## close $fp
+## if {[llength $boards] == 0} {
+##     puts "ERROR: no valid board entries in $cfg_file"; exit 1
+## }
+## set serial_ns {}
+## set fs [open $serial_file r]
+## foreach line [split [read $fs] "\n"] {
+##     set ltrim [string trim $line]
+##     if {$ltrim eq "" || [string index $ltrim 0] == "#"} continue
+##     lappend serial_ns $ltrim
+##     if {[llength $serial_ns] >= $max_boards} { break }
+## }
+## close $fs
+## if {[llength $serial_ns] == 0} {
+##     puts "ERROR: no valid serial number entries in $serial_file"; exit 1
+## }
+## set all_tests {}
+INFO: [Common 17-206] Exiting vivado_lab at Thu Jul 10 11:30:41 2025...
