@@ -74,18 +74,12 @@ proc wait_for_stable_ber {linkObj thresholdBits max_wait_ms} {
 
 
 # --- 0) User parameters (make sure these appear before you ever use $cfg_file or $max_boards)
-# ————————————————————————————————
+# ———————————————————————————————————————————————————— #
 # --------- on-board links tests  -------------------- #
 set cfg_file "ibert_06252025-verification_test_2.txt"
-# --------- qsfp links tests  -------------------- #
-#set cfg_file "ibert_06252025-qsfp_test.txt"
-# --------- on-board links tests  -------------------- #
-#set serial_file   "serial_numbers_rev4.txt"  
-# --------- qsfp links tests  -------------------- #
-#set serial_file   "serial_numbers_qsfp.txt"
 set serial_file   "serial_numbers_2.txt"     
 set max_boards 4
-# ————————————————————————————————
+# ———————————————————————————————————————————————————— #
 
 # --- 1) Locate & launch hw_server.bat by searching up from vivado.exe ---- #
 set vivado_exe [file normalize [info nameofexecutable]]
@@ -364,10 +358,10 @@ foreach entry $boards {
 
     # 5.1) Switch & open the correct target
     catch { close_hw_target }
-	after 80
-	catch { disconnect_hw_server }
-	after 80
-	connect_hw_server -url localhost:3121
+	##after 80
+	##catch { disconnect_hw_server }
+	##after 80
+	##connect_hw_server -url localhost:3121
 	after 3000
     foreach t [get_hw_targets] {
         if {[lindex [split [get_property UID $t] "/"] end] eq $serial} {
@@ -386,7 +380,7 @@ foreach entry $boards {
     set fpga_dev [lindex [get_hw_devices -of_objects $t] 0]
 	after 500
     refresh_hw_device -force_poll $fpga_dev
-	after 8000
+	after 10000
 	
 	
 	# --- New: clear existent links before creating new ones ---
@@ -398,9 +392,9 @@ foreach entry $boards {
 		after 100
     }
 		commit_hw_sio -non_blocking $existing_links
-		after 100
+		after 10000
 	} else {
-		puts "ℹ️  No existing links found to delete."
+		puts "No existing links found to delete."
 	}
 	after 8000
 
@@ -420,7 +414,7 @@ foreach entry $boards {
 
 		# Ignora o par se qualquer um dos dois estiver marcado como :DISABLED
 		if {[string match "*:DISABLED" $txRaw] || [string match "*:DISABLED" $rxRaw]} {
-			puts "🔕 Skipping link (DISABLED): $txRaw ↔ $rxRaw"
+			puts " Skipping link (DISABLED): $txRaw ↔ $rxRaw"
 			continue
 		}
 
@@ -443,18 +437,42 @@ foreach entry $boards {
         set linkObj [create_hw_sio_link $txObj $rxObj]
 		after 500
         commit_hw_sio   $linkObj
+		after 1000
+		
+		set_property PORT.RXPOLARITY 0 $linkObj
+		commit_hw_sio $linkObj
+		after 1000
+		
+		set_property PORT.TXPOLARITY 0 $linkObj
+		commit_hw_sio $linkObj
+		after 1000
+		
+		set_property PORT.TXPRBSSEL 3 $linkObj
+		commit_hw_sio $linkObj
+		after 1000
+		
+		set_property PORT.RXPRBSSEL 3 $linkObj
+		commit_hw_sio $linkObj
+		after 1000
+
+		
+		#set_property A_TXPRBSSEL {PRBS31} $linkObj
+		#after 500
+		#set_property A_RXPRBSSEL {PRBS31} $linkObj
+		#after 500
+        commit_hw_sio -non_blocking $linkObj
 		after 10000
 				
 		# Set PRBS pattern
-		set_property TX_PATTERN {PRBS 7-bit} $linkObj
+		#set_property TX_PATTERN {PRBS 7-bit} $linkObj
 		#set_property TX_PATTERN {PRBS 15-bit} $linkObj
 		#set_property TX_PATTERN {PRBS 23-bit} $linkObj
-        #set_property TX_PATTERN {PRBS 31-bit} $linkObj
-		after 500
-		set_property RX_PATTERN {PRBS 7-bit} $linkObj
+        set_property TX_PATTERN {PRBS 31-bit} $linkObj
+		#after 500
+		#set_property RX_PATTERN {PRBS 7-bit} $linkObj
 		#set_property RX_PATTERN {PRBS 15-bit} $linkObj
 		#set_property RX_PATTERN {PRBS 23-bit} $linkObj
-		#set_property RX_PATTERN {PRBS 31-bit} $linkObj
+		set_property RX_PATTERN {PRBS 31-bit} $linkObj
 		
 		
 		# half data rate = 12.5 GHz
@@ -463,11 +481,11 @@ foreach entry $boards {
 		# quarter data rate = 6.25 GHz		
 		#set_property TX_PATTERN {Slow Clk} $linkObj  
 		#set_property RX_PATTERN {Slow Clk} $linkObj
-		after 1000
+		#after 1000
 		
 		# Commit settings (non-blocking commit is acceptable here)
         commit_hw_sio -non_blocking $linkObj
-		after 1000
+		after 10000
 
 		
 		# Additional signal integrity settings
@@ -482,6 +500,7 @@ foreach entry $boards {
 		#set_property TXDIFFSWING {730 mV (01101)} $linkObj
 		set_property TXDIFFSWING {780 mV (10000)} $linkObj
 		#set_property TXDIFFSWING {390 mV (00000)} $linkObj
+		#set_property TXDIFFSWING {1040 mV (11111)} $linkObj
 		after 1000
 
 		
@@ -498,15 +517,19 @@ foreach entry $boards {
 		
 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 1 $linkObj
 		after 500
-		commit_hw_sio -non_blocking $linkObj
-		after 10000
+		#commit_hw_sio -non_blocking $linkObj
+		#after 10000
 		
 		set_property LOGIC.MGT_ERRCNT_RESET_CTRL 0 $linkObj
 		after 500
 		commit_hw_sio -non_blocking $linkObj
 		after 10000
 		
-		# Poll RXCDRLOCKSTICKY
+		set_property PORT.RXPRBSCNTRESET 1 $linkObj
+		after 100
+		set_property PORT.RXPRBSCNTRESET 0 $linkObj
+		after 100
+
 		set elapsed 0
 		set timeout 5000
 		while {$elapsed < $timeout} {
@@ -538,7 +561,7 @@ foreach entry $boards {
     # Verify if bits received increased 
 	set delta [expr {$bits_after - $bits_before}]
 	if {$delta < 0} {
-		puts "⚠ Bit counter restarted (overflow)."
+		puts "Bit counter restarted (overflow)."
 		set delta [expr {(2**64) + $delta}]  ;# estimativa para wrap de 64 bits
 	}
 	
@@ -590,7 +613,7 @@ foreach entry $boards {
 		set bp_path [lindex $board_labels $i]
 
 		# Wait for stabilization before starting the test
-		wait_for_stable_ber $linkObj $threshold 10000
+		#wait_for_stable_ber $linkObj $threshold 10000
 
         puts "\nINFO: $label waiting for more than $threshold bits"
         set bits 0
@@ -602,10 +625,16 @@ foreach entry $boards {
 			set ber [get_property RX_BER $linkObj]
             after 500
         }
+		puts "Link: $linkObj"
+		puts "  CDR Locked: [get_property PORT.RXCDRLOCK $linkObj]"
+		puts "  PRBS Locked: [get_property PORT.RXPRBSLOCKED $linkObj]"
+		puts "  RX Valid: [get_property PORT.RXDATAVALID $linkObj]"
         refresh_hw_device -force_poll $fpga_dev
 		#after 500
 		set link_error [expr {$bits*$ber}]
         puts "RESULT: $serial - $bp_path -  bits=$bits   BER=$ber  ERRORS=$link_error"
+	
+
 		
 		# Output for python integration
 		set status "ENABLED"

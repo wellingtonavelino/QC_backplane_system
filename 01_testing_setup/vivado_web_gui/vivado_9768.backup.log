@@ -1,0 +1,1267 @@
+#-----------------------------------------------------------
+# Vivado v2022.2 (64-bit)
+# SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
+# IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+# Start of session at: Thu Jul 17 14:36:17 2025
+# Process ID: 9768
+# Current directory: C:/Wellington/iBERT_CRS_Boards/QC_backplane_system/01_testing_setup/vivado_web_gui
+# Command line: vivado.exe -mode batch -source C:\Users\COSMOL~1\AppData\Local\Temp\tmp0tu65y5t.tcl
+# Log file: C:/Wellington/iBERT_CRS_Boards/QC_backplane_system/01_testing_setup/vivado_web_gui/vivado.log
+# Journal file: C:/Wellington/iBERT_CRS_Boards/QC_backplane_system/01_testing_setup/vivado_web_gui\vivado.jou
+# Running On: Royal, OS: Windows, CPU Frequency: 2995 MHz, CPU Physical cores: 24, Host memory: 68549 MB
+#-----------------------------------------------------------
+source {C:\Users\COSMOL~1\AppData\Local\Temp\tmp0tu65y5t.tcl}
+# source "ibert_run_step2-1_BER-Testing.tcl"
+## set log_file "ibert_qc_ber.log"
+## set log_fh   [open $log_file a]
+## puts $log_fh "IBERT QC BER Log"
+## puts $log_fh "Date: [clock format [clock seconds] -format {%Y-%m-%d %H:%M:%S}]"
+## puts $log_fh "Serial,from Board,to Board,BER, ERRORS"
+## set cfg_file "ibert_06252025-verification_test.txt"
+## set serial_file   "serial_numbers.txt"  
+## set max_boards 4
+## proc reset_prbs_and_errcnt {linkObj repeat_count delay_ms} {
+##     puts "→ Performing $repeat_count PRBS resets on [get_property NAME $linkObj]"
+##     for {set i 0} {$i < $repeat_count} {incr i} {
+##         set_property PORT.RXPRBSCNTRESET 1 $linkObj
+##         after $delay_ms
+##         set_property PORT.RXPRBSCNTRESET 0 $linkObj
+##         after $delay_ms
+##     }
+## 
+##     puts "→ Resetting error counter logic..."
+##     set_property LOGIC.MGT_ERRCNT_RESET_CTRL 1 $linkObj
+##     after $delay_ms
+##     set_property LOGIC.MGT_ERRCNT_RESET_CTRL 0 $linkObj
+##     after $delay_ms
+## }
+## proc wait_for_stable_ber {linkObj thresholdBits max_wait_ms} {
+##     set elapsed 0
+##     set wait_step 200
+## 
+##     puts "Waiting for RX bit count to start flowing..."
+##     set bits_before [get_property RX_RECEIVED_BIT_COUNT $linkObj]
+##     after $wait_step
+##     set bits_now [get_property RX_RECEIVED_BIT_COUNT $linkObj]
+## 
+##     while {$bits_now <= $bits_before && $elapsed < $max_wait_ms} {
+##         refresh_hw_device -force_poll [get_hw_devices]
+##         set bits_before $bits_now
+##         after $wait_step
+##         set bits_now [get_property RX_RECEIVED_BIT_COUNT $linkObj]
+##         incr elapsed $wait_step
+##     }
+## 
+##     if {$bits_now > $bits_before} {
+##         puts "Bit count increasing"
+##     } else {
+##         puts "Bit count did not increase after timeout → continuing anyway"
+##     }
+## 
+##     puts "Waiting for BER to drop below 0.2..."
+##     set ber [get_property RX_BER $linkObj]
+##     set target_ber 0.2
+##     set elapsed 0
+##     while {$ber > $target_ber && $elapsed < $max_wait_ms} {
+##         refresh_hw_device -force_poll [get_hw_devices]
+##         set ber [get_property RX_BER $linkObj]
+## 		after $wait_step
+##         puts "… Waiting for BER < $target_ber → now=$ber"
+##         incr elapsed $wait_step
+##     }
+## 
+##     if {$ber < $target_ber} {
+##         puts " BER dropped to acceptable range: $ber"
+##     } else {
+##         puts " BER stayed high → result may be invalid"
+##     }
+## }
+## proc wait_for_prbs_lock {linkObj max_wait_ms} {
+##     set elapsed 0
+##     set wait_step 200
+##     set locked 0
+##     while {$elapsed < $max_wait_ms} {
+##         set locked [get_property PORT.RXPRBSLOCKED $linkObj]
+##         if {$locked == 1} {
+##             puts " PRBS LOCKED after ${elapsed}ms"
+##             return 1
+##         }
+##         after $wait_step
+##         incr elapsed $wait_step
+##     }
+##     puts " WARNING: PRBS NOT LOCKED after ${max_wait_ms}ms"
+##     return 0
+## }
+## open_hw_manager
+## after 5000
+## connect_hw_server -url localhost:3121
+INFO: [Labtools 27-2285] Connecting to hw_server url TCP:localhost:3121
+INFO: [Labtools 27-2222] Launching hw_server...
+INFO: [Labtools 27-2221] Launch Output:
+
+****** Xilinx hw_server v2022.2
+  **** Build date : Oct 14 2022 at 05:18:10
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+
+INFO: [Labtools 27-3415] Connecting to cs_server url TCP:localhost:0
+INFO: [Labtools 27-3417] Launching cs_server...
+INFO: [Labtools 27-2221] Launch Output:
+
+
+******** Xilinx cs_server v2022.2.0
+  ****** Build date   : Oct 04 2022-19:25:37
+    **** Build number : 2022.2.1664925937
+      ** Copyright 2017-2025 Xilinx, Inc. All Rights Reserved.
+
+
+
+connect_hw_server: Time (s): cpu = 00:00:00 ; elapsed = 00:00:13 . Memory (MB): peak = 1031.234 ; gain = 24.836
+## after 5000
+## set boards {}
+## set fp [open $cfg_file r]
+## foreach line [split [read $fp] "\n"] {
+##     set ltrim [string trim $line]
+##     if {$ltrim eq "" || [string index $ltrim 0] == "#"} continue
+##     lappend boards $ltrim
+##     if {[llength $boards] >= $max_boards} { break }
+## }
+## if {[llength $boards] == 0} {
+##     puts "ERROR: no valid board entries in $cfg_file"; exit 1
+## }
+## set serial_ns {}
+## set fs [open $serial_file r]
+## foreach line [split [read $fs] "\n"] {
+##     set ltrim [string trim $line]
+##     if {$ltrim eq "" || [string index $ltrim 0] == "#"} continue
+##     lappend serial_ns $ltrim
+##     if {[llength $serial_ns] >= $max_boards} { break }
+## }
+## close $fs
+## if {[llength $serial_ns] == 0} {
+##     puts "ERROR: no valid serial number entries in $serial_file"; exit 1
+## }
+## set all_tests {}
+## for {set pass 1} {$pass <= 4} {incr pass} {
+##     puts "\n=== Starting BER Test Pass #$pass ==="
+##     puts $log_fh "\n=== BER Test Pass #$pass ==="
+## 	puts $log_fh "IBERT QC BER Log"
+## 	puts $log_fh "Date: [clock format [clock seconds] -format {%Y-%m-%d %H:%M:%S}]"
+## 	puts $log_fh "Serial,from Board,to Board,BER, ERRORS"
+## 
+## 	set slt 0
+## 	foreach entry $boards {
+## 		# parse exactly as in Phase 1
+## 		set parts     [split $entry ","]
+## 		set to_board  [lindex $parts 0]
+## 		set serial [lindex $serial_ns $slt]
+## 		#set serial    [lindex $parts 1]
+## 		set threshold [expr {[lindex $parts 3]}]
+## 		set paths     [lrange $parts 4 6]
+## 		set links     [lrange $parts 7 end]
+## 
+## 		puts "\n=== BER Test for board #$slt: $serial ==="
+## 
+## 		# 2.1) Switch & open the correct target
+## 		catch { close_hw_target }
+## 		##after 80
+## 		##connect_hw_server -url localhost:3121
+## 		after 800
+## 		foreach t [get_hw_targets] {
+## 			if {[lindex [split [get_property UID $t] "/"] end] eq $serial} {
+## 				current_hw_target $t
+## 				after 800
+## 				if {[catch { open_hw_target } err]} {
+## 					puts "ERROR opening target $serial: $err"
+## 					continue 2
+## 				}
+## 				break
+## 			}
+## 		}
+## 		incr slt
+## 
+## 		# 2.2) Locate and refresh the FPGA device
+## 		set fpga_dev [lindex [get_hw_devices -of_objects $t] 0]
+## 		after 500
+## 		refresh_hw_device -force_poll $fpga_dev
+## 		after 500
+## 		
+## 		
+## 		# --- New: clear existent links before creating new ones ---
+## 		puts "Cleaning old existent links in the device..."
+## 		set existing_links [get_hw_sio_links -of_objects $fpga_dev]
+## 		if {[llength $existing_links] > 0} {
+## 			foreach lnk $existing_links {
+## 				delete_hw_sio_link $lnk
+## 				after 1000
+## 			}
+## 			commit_hw_sio -non_blocking $existing_links
+## 			after 8000
+## 		} else {
+## 			puts "No existing links found to delete."
+## 		}
+## 		after 500
+## 
+## 		# 2.3) Grab raw TX/RX endpoints
+## 		set txs [get_hw_sio_txs -of_objects $fpga_dev]
+## 		after 500
+## 		set rxs [get_hw_sio_rxs -of_objects $fpga_dev]
+## 		after 500
+## 
+## 		# 2.4) For each link in the text file, rebuild & test it
+## 		set linkObjs {}                   ;# initialize
+## 		for {set i 0} {$i < [llength $links]} {incr i 2} {
+## 			
+## 			# --- New block to ENSBLE/DISABLE treatment ---
+## 			set txRaw [lindex $links $i]
+## 			set rxRaw [lindex $links [expr {$i+1}]]
+## 
+## 			# Ignore pair if um of them has :DISABLED
+## 			if {[string match "*:DISABLED" $txRaw] || [string match "*:DISABLED" $rxRaw]} {
+## 				puts " Skipping link (DISABLED): $txRaw ↔ $rxRaw"
+## 				continue
+## 			}
+## 
+## 			# Extract TX/RX base name(removing :ENABLED or :DISABLED)
+## 			set txName [lindex [split $txRaw ":"] 0]
+## 			set rxName [lindex [split $rxRaw ":"] 0]
+## 			
+## 			set txObj ""; foreach x $txs {
+## 				if {[string match "*$txName" [get_property NAME $x]]} { set txObj $x; break }
+## 			}
+## 			set rxObj ""; foreach x $rxs {
+## 				if {[string match "*$rxName" [get_property NAME $x]]} { set rxObj $x; break }
+## 			}
+## 			if {$txObj eq "" || $rxObj eq ""} {
+## 				puts "WARN: Could not find endpoints $txName/$rxName"
+## 				continue
+## 			}
+## 
+## 			# 2.4.1) Re-create the SIO link & arm PRBS31
+## 			set linkObj [create_hw_sio_link $txObj $rxObj]
+## 			after 500
+## 			
+## 			#commit_hw_sio $linkObj
+## 			#after 10000
+## 			
+## 			#set_property TXPRE {3.90 dB (01111)} $linkObj
+## 			set_property TXPRE {1.87 dB (01000)} $linkObj
+## 			#set_property TXPRE {0.01 dB (00000)} $linkObj
+## 			#after 8000		
+## 			#set_property TXPOST {3.99 dB (01111)} $linkObj
+## 			set_property TXPOST {2.98 dB (01011)} $linkObj
+## 			#set_property TXPOST {0.00 dB (00000)} $linkObj
+## 			#after 8000
+## 			#set_property TXDIFFSWING {730 mV (01101)} $linkObj
+## 			set_property TXDIFFSWING {780 mV (10000)} $linkObj
+## 			#set_property TXDIFFSWING {390 mV (00000)} $linkObj
+## 			#set_property TXDIFFSWING {1040 mV (11111)} $linkObj
+## 			after 1000
+## 			
+## 			#set_property PORT.RXPOLARITY 0 $linkObj
+## 			#commit_hw_sio $linkObj
+## 			#after 8000
+## 			
+## 			#set_property PORT.TXPOLARITY 0 $linkObj
+## 			#commit_hw_sio $linkObj
+## 			#after 1000
+## 			
+## 			set_property TX_PATTERN {PRBS 31-bit} $linkObj
+## 			#after 8000
+## 			set_property RX_PATTERN {PRBS 31-bit} $linkObj
+## 			after 500  ;# Allow PRBS logic to activate internally
+## 			
+## 			# --- Call the PRBS + error reset helper ---
+## 			reset_prbs_and_errcnt $linkObj 3 500
+## 			after 2000  ;# Let link settle after all resets
+## 
+## 			
+## 			#set_property PORT.TXPRBSSEL 3 $linkObj
+## 			#commit_hw_sio $linkObj
+## 			#after 8000
+## 			
+## 			#set_property PORT.RXPRBSSEL 3 $linkObj
+## 			#commit_hw_sio $linkObj
+## 			#after 1000
+## 			
+## 
+## 			#commit_hw_sio -non_blocking $linkObj
+## 			#after 1000
+## 			
+## 			
+## 			#refresh_hw_device -force_poll [get_hw_devices]
+## 			#after 1000
+## 
+## 			#commit_hw_sio -non_blocking $linkObj
+## 			#after 10000
+## 			
+## 			# record the link object and a label
+## 			lappend linkObjs [list $linkObj "$txName->$rxName"]
+## 			after 500
+## 			# cleanup txObj/rxObj for next iteration
+## 			unset txObj rxObj
+## 			after 800
+## 			
+## 			set_property LOGIC.MGT_ERRCNT_RESET_CTRL 1 $linkObj
+## 			after 800
+## 			#commit_hw_sio -non_blocking $linkObj
+## 			#after 10000
+## 			
+## 			set_property LOGIC.MGT_ERRCNT_RESET_CTRL 0 $linkObj
+## 			after 800
+## 			
+## 			#commit_hw_sio -non_blocking $linkObj
+## 			#after 5000
+## 			
+## 			set_property PORT.RXPRBSCNTRESET 1 $linkObj
+## 			after 500
+## 			set_property PORT.RXPRBSCNTRESET 0 $linkObj
+## 			after 500
+## 			commit_hw_sio -non_blocking $linkObj
+## 			after 800
+## 			
+## 			#refresh_hw_device -force_poll [get_hw_devices]
+## 			#after 3000
+## 
+## 			set elapsed 0
+## 			set timeout 10000
+## 			while {$elapsed < $timeout} {
+## 				refresh_hw_device -force_poll [get_hw_devices]
+## 				after 800
+## 				set cdrlock [get_property PORT.RXCDRLOCK $linkObj]
+## 				if {$cdrlock} {
+## 					puts " CDR LOCKED after $elapsed sec"
+## 					#return 1
+## 					set elapsed 10000
+## 				}
+## 				incr elapsed
+## 			}
+## 		}
+## 		
+## 		# 2.5) Reset all link error counters before BER test
+## 		puts "\nINFO: resetting error counters on all links..."
+## 		foreach pair $linkObjs {
+## 			set lnk [lindex $pair 0]
+## 			# assert reset
+## 			set_property LOGIC.MGT_ERRCNT_RESET_CTRL 1 $lnk
+## 			after 800
+## 			commit_hw_sio -non_blocking $lnk
+## 			after 8000
+## 		}
+## 		# de-assert reset
+## 		foreach pair $linkObjs {
+## 			set lnk [lindex $pair 0]
+## 			set_property LOGIC.MGT_ERRCNT_RESET_CTRL 0 $lnk
+## 			after 1000
+## 			commit_hw_sio -non_blocking $lnk
+## 			after 8000
+## 		}
+## 		puts "OK: error counters cleared"
+## 		
+## 		set paths [lrange $parts 4 6]
+## 		set from_board1 [lindex $paths 0]
+## 		set from_board2 [lindex $paths 1]
+## 		set from_board3 [lindex $paths 2]
+## 		
+## 		set board_labels [list $from_board1 $from_board2 $from_board3]
+## 		set i 0
+## 
+## 
+## 		# 2.6) Now run BER test on each link
+## 		foreach pair $linkObjs {
+## 			set linkObj [lindex $pair 0]
+## 			set label   [lindex $pair 1]
+## 			
+## 			# --- Wait for PRBS lock before starting BER ---
+## 			#puts "Waiting for PRBS lock on $label..."
+## 			#wait_for_prbs_lock $linkObj 10000   ;# Wait up to 10 seconds
+## 			#after 1000  ;# Extra delay for stability
+## 			
+## 			set bp_path [lindex $board_labels $i]
+## 
+## 			# Wait for stabilization before starting the test
+## 			#wait_for_stable_ber $linkObj $threshold 10000
+## 
+## 			refresh_hw_device -force_poll $fpga_dev
+## 			after 800
+## 
+## 			puts "\nINFO: $label waiting for more than $threshold bits"
+## 			set bits 0
+## 			set link_error 0
+## 			while {$bits < $threshold} {
+## 				refresh_hw_device -force_poll $fpga_dev
+## 				after 500
+## 				set bits [get_property RX_RECEIVED_BIT_COUNT $linkObj]
+## 				set ber [get_property RX_BER $linkObj]
+## 				#after 500
+## 			}
+## 			puts "Link: $linkObj"
+## 			puts "  CDR Locked: [get_property PORT.RXCDRLOCK $linkObj]"
+## 			puts "  PRBS Locked: [get_property PORT.RXPRBSLOCKED $linkObj]"
+## 			puts "  RX Valid: [get_property PORT.RXDATAVALID $linkObj]"
+## 			refresh_hw_device -force_poll $fpga_dev
+## 			#after 500
+## 			set link_error [expr {$bits*$ber}]
+## 			puts "RESULT: $serial - $bp_path -  bits=$bits   BER=$ber  ERRORS=$link_error"
+## 		
+## 			# puts "\n Checking RX activity before BER testing..."
+## 			# foreach pair $linkObjs {
+## 			# set lnk [lindex $pair 0]
+## 			# set label [lindex $pair 1]
+## 
+## 			# # Initial Reading of received bits 
+## 			# set bits_before [get_property RX_RECEIVED_BIT_COUNT $lnk]
+## 			# after 2000
+## 			# set bits_after [get_property RX_RECEIVED_BIT_COUNT $lnk]
+## 			# refresh_hw_device -force_poll $fpga_dev
+## 			# after 800
+## 
+## 			# # Verify if bits received increased 
+## 			# set delta [expr {$bits_after - $bits_before}]
+## 			# if {$delta < 0} {
+## 				# puts "Bit counter restarted (overflow)."
+## 				# set delta [expr {(2**64) + $delta}]  ;# estimativa para wrap de 64 bits
+## 			# }
+## 		
+## 			# if {$delta > 0} {
+## 				# puts "Active Link: increased in $delta bits ($bits_before → $bits_after)"
+## 			# } else {
+## 				# puts "Stopped Link: $bits_before = $bits_after"
+## 			# }
+## 		# }
+## 			
+## 			# Output for python integration
+## 			set status "ENABLED"
+## 			if {[string match "*:DISABLED" $txRaw] || [string match "*:DISABLED" $rxRaw]} {
+## 				set status "DISABLED"
+## 			}
+## 			if {$pass > 3} {
+## 				puts "PYTHON_OUT: serial=$serial;link=$label;status=$status;from=$bp_path;to=$to_board;ber=$ber;errors=$link_error"
+## 				puts $log_fh "$serial,$bp_path,$to_board,$ber,$link_error"
+## 			}	
+## 			
+## 			incr i
+## 		}
+## 
+## 		# 2.7) Close this target before moving on
+## 		catch { close_hw_target }
+## 	};# end foreach entry
+##     puts "\n=== BER Test Pass #$pass complete ==="
+##     puts $log_fh "=== BER Test Pass #$pass complete ==="
+## } ;
+
+=== Starting BER Test Pass #1 ===
+
+=== BER Test for board #0: 000026A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00010A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/00010A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/000026A
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+refresh_hw_device: Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 3299.566 ; gain = 2266.957
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 000026A - slot1--> -  bits=283055357040   BER=3.5328778457236012e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 000026A - slot2--> -  bits=232047016480   BER=4.3094714819838652e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 000026A - slot3--> -  bits=180873557440   BER=5.5287241217209069e-12  ERRORS=1.0
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/000026A
+
+=== BER Test for board #1: 00010A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/000026A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/000026A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/00010A
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00010A - slot0--> -  bits=283144583920   BER=3.531764535826478e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00010A - slot2--> -  bits=231485880800   BER=4.3199178997184004e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00010A - slot3--> -  bits=179431265600   BER=5.5731647249775623e-12  ERRORS=0.9999999999999999
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00010A
+
+=== BER Test for board #2: 00018A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00010A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/00010A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/00018A
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00018A - slot0--> -  bits=283114768880   BER=3.5321364687401963e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00018A - slot1--> -  bits=232096321760   BER=4.3085560013055851e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00018A - slot3--> -  bits=180183484640   BER=5.5498982162430886e-12  ERRORS=1.0
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00018A
+
+=== BER Test for board #3: 00006A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00018A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/00018A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/00006A
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00006A - slot0--> -  bits=282826090480   BER=3.5357416930766322e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00006A - slot1--> -  bits=231350534960   BER=4.3224451595622972e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00006A - slot2--> -  bits=178773261360   BER=5.5936776696503624e-12  ERRORS=1.0
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00006A
+
+=== BER Test Pass #1 complete ===
+
+=== Starting BER Test Pass #2 ===
+
+=== BER Test for board #0: 000026A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00006A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/00006A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/000026A
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 000026A - slot1--> -  bits=283928993920   BER=3.5220073377985503e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 000026A - slot2--> -  bits=232751980400   BER=4.2964188673343724e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 000026A - slot3--> -  bits=180545027920   BER=5.5387844878403559e-12  ERRORS=1.0
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/000026A
+
+=== BER Test for board #1: 00010A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/000026A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/000026A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/00010A
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00010A - slot0--> -  bits=283642051120   BER=3.5255703308143528e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00010A - slot2--> -  bits=233233678880   BER=4.2875454557079877e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00010A - slot3--> -  bits=180906439440   BER=5.5277192072074534e-12  ERRORS=1.0
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00010A
+
+=== BER Test for board #2: 00018A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00010A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/00010A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/00018A
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00018A - slot0--> -  bits=283037769600   BER=3.533097372174883e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00018A - slot1--> -  bits=231763527520   BER=4.3147427496490155e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00018A - slot3--> -  bits=179634866000   BER=5.5668480304931452e-12  ERRORS=1.0
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00018A
+
+=== BER Test for board #3: 00006A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00018A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/00018A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/00006A
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+Link: localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+RESULT: 00006A - slot0--> -  bits=283243276000   BER=3.5305339428428304e-12  ERRORS=1.0
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+INFO: [Labtools 27-2302] Device xczu47dr (JTAG device index = 0) is programmed with a design that has 1 IBERT core(s).
+INFO: [Common 17-14] Message 'Labtools 27-2302' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+Link: localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00006A - slot1--> -  bits=232331217920   BER=4.3041998787452485e-12  ERRORS=0.9999999999999999
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00006A - slot2--> -  bits=180346787280   BER=5.5448728257489591e-12  ERRORS=1.0
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00006A
+
+=== BER Test Pass #2 complete ===
+
+=== Starting BER Test Pass #3 ===
+
+=== BER Test for board #0: 000026A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00006A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/00006A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/000026A
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 000026A - slot1--> -  bits=283200440560   BER=3.5310679532228195e-12  ERRORS=1.0
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 000026A - slot2--> -  bits=232421908240   BER=4.3025203930749723e-12  ERRORS=1.0
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 000026A - slot3--> -  bits=180235218400   BER=5.5483052029303062e-12  ERRORS=1.0
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/000026A
+
+=== BER Test for board #1: 00010A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/000026A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/000026A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/00010A
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00010A - slot0--> -  bits=283448148880   BER=3.5279821157814575e-12  ERRORS=1.0
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00010A - slot2--> -  bits=231803461440   BER=4.3139994277386578e-12  ERRORS=1.0
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00010A - slot3--> -  bits=179624998080   BER=5.5671538521304683e-12  ERRORS=1.0
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00010A
+
+=== BER Test for board #2: 00018A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00010A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/00010A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/00018A
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00018A - slot0--> -  bits=283153567120   BER=3.5316524886871783e-12  ERRORS=1.0
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00018A - slot1--> -  bits=233352506400   BER=4.2853621562815145e-12  ERRORS=0.9999999999999999
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00018A - slot3--> -  bits=180974048320   BER=5.5256541436913136e-12  ERRORS=1.0
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00018A
+
+=== BER Test for board #3: 00006A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00018A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/00018A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/00006A
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00006A - slot0--> -  bits=282952160240   BER=3.5341663380544614e-12  ERRORS=1.0
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00006A - slot1--> -  bits=232557305520   BER=4.3000154209905036e-12  ERRORS=1.0
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00006A - slot2--> -  bits=180677755520   BER=5.53471564400359e-12  ERRORS=1.0
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00006A
+
+=== BER Test Pass #3 complete ===
+
+=== Starting BER Test Pass #4 ===
+
+=== BER Test for board #0: 000026A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00006A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/00006A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/000026A
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 000026A - slot1--> -  bits=283302260560   BER=3.5297988728480762e-12  ERRORS=1.0
+PYTHON_OUT: serial=000026A;link=Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX;status=ENABLED;from=slot1-->;to=slot0;ber=3.5297988728480762e-12;errors=1.0
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 000026A - slot2--> -  bits=232468890480   BER=4.3016508485725016e-12  ERRORS=0.9999999999999999
+PYTHON_OUT: serial=000026A;link=Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX;status=ENABLED;from=slot2-->;to=slot0;ber=4.3016508485725016e-12;errors=0.9999999999999999
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/000026A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 000026A - slot3--> -  bits=180364974000   BER=5.5443137202459272e-12  ERRORS=0.9999999999999999
+PYTHON_OUT: serial=000026A;link=Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX;status=ENABLED;from=slot3-->;to=slot0;ber=5.5443137202459272e-12;errors=0.9999999999999999
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/000026A
+
+=== BER Test for board #1: 00010A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/000026A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/000026A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/00010A
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00010A - slot0--> -  bits=283212831360   BER=3.5309134660246771e-12  ERRORS=1.0
+PYTHON_OUT: serial=00010A;link=Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX;status=ENABLED;from=slot0-->;to=slot1;ber=3.5309134660246771e-12;errors=1.0
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00010A - slot2--> -  bits=232332345040   BER=4.3041789976674704e-12  ERRORS=1.0
+PYTHON_OUT: serial=00010A;link=Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX;status=ENABLED;from=slot2-->;to=slot1;ber=4.3041789976674704e-12;errors=1.0
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00010A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00010A - slot3--> -  bits=181185380720   BER=5.5192090886481543e-12  ERRORS=1.0
+PYTHON_OUT: serial=00010A;link=Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX;status=ENABLED;from=slot3-->;to=slot1;ber=5.5192090886481543e-12;errors=1.0
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00010A
+
+=== BER Test for board #2: 00018A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00010A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/00010A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/00018A
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00018A - slot0--> -  bits=283251014480   BER=3.5304374878791785e-12  ERRORS=1.0
+PYTHON_OUT: serial=00018A;link=Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX;status=ENABLED;from=slot0-->;to=slot2;ber=3.5304374878791785e-12;errors=1.0
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00018A - slot1--> -  bits=232081140320   BER=4.3088378427526332e-12  ERRORS=1.0
+PYTHON_OUT: serial=00018A;link=Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX;status=ENABLED;from=slot1-->;to=slot2;ber=4.3088378427526332e-12;errors=1.0
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00018A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00018A - slot3--> -  bits=179963383280   BER=5.5566859311826115e-12  ERRORS=1.0
+PYTHON_OUT: serial=00018A;link=Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX;status=ENABLED;from=slot3-->;to=slot2;ber=5.5566859311826115e-12;errors=1.0
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00018A
+
+=== BER Test for board #3: 00006A ===
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00018A
+INFO: [Labtoolstcl 44-468] Target hw_target localhost:3121/xilinx_tcf/Xilinx/00018A is already closed
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/00006A
+Cleaning old existent links in the device...
+WARNING: [Labtoolstcl 44-158] No matching hw_sio_links were found.
+No existing links found to delete.
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+→ Performing 3 PRBS resets on localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+→ Resetting error counter logic...
+ CDR LOCKED after 0 sec
+
+INFO: resetting error counters on all links...
+OK: error counters cleared
+
+INFO: Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y18/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00006A - slot0--> -  bits=283167149920   BER=3.5314830843991567e-12  ERRORS=1.0
+PYTHON_OUT: serial=00006A;link=Quad_131/MGT_X0Y18/TX->Quad_131/MGT_X0Y18/RX;status=ENABLED;from=slot0-->;to=slot3;ber=3.5314830843991567e-12;errors=1.0
+
+INFO: Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_131/MGT_X0Y16/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00006A - slot1--> -  bits=232079136160   BER=4.3088750524759795e-12  ERRORS=1.0
+PYTHON_OUT: serial=00006A;link=Quad_131/MGT_X0Y16/TX->Quad_131/MGT_X0Y16/RX;status=ENABLED;from=slot1-->;to=slot3;ber=4.3088750524759795e-12;errors=1.0
+
+INFO: Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX waiting for more than 100000000000 bits
+Link: localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/TX->localhost:3121/xilinx_tcf/Xilinx/00006A/0_1_0_0/IBERT/Quad_130/MGT_X0Y14/RX
+  CDR Locked: 1
+  PRBS Locked: 0
+  RX Valid: 3
+RESULT: 00006A - slot2--> -  bits=180094031840   BER=5.5526548535957304e-12  ERRORS=1.0
+PYTHON_OUT: serial=00006A;link=Quad_130/MGT_X0Y14/TX->Quad_130/MGT_X0Y14/RX;status=ENABLED;from=slot2-->;to=slot3;ber=5.5526548535957304e-12;errors=1.0
+INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Xilinx/00006A
+
+=== BER Test Pass #4 complete ===
+## puts $log_fh "\n=== All BER tests complete ==="
+## puts $log_fh ""
+## puts "\n=== All BER tests complete ==="
+
+=== All BER tests complete ===
+## close $log_fh
+## puts "Wrote BER results to $log_file"
+Wrote BER results to ibert_qc_ber.log
+## close_hw_manager
+## puts "\nAll done. Processed [llength $boards] boards, [llength $all_tests] links."
+
+All done. Processed 4 boards, 0 links.
+## exit 0
+INFO: [Common 17-206] Exiting Vivado at Thu Jul 17 15:07:28 2025...

@@ -175,3 +175,331 @@ Serial,from Board,to Board,BER, ERRORS
 000043A,slot1-->,slot3,6.6001677932546117e-13,0.2441689439525054
 000043A,slot2-->,slot3,6.2501677932546117e-13,0.567317270077593
 
+IBERT QC BER Log
+Date: 2025-07-16 21:26:21
+Serial,from Board,to Board,BER, ERRORS
+IBERT QC BER Log
+Date: 2025-07-16 21:28:09
+Serial,from Board,to Board,BER, ERRORS
+IBERT QC BER Log
+Date: 2025-07-16 21:29:54
+Serial,from Board,to Board,BER, ERRORS
+IBERT QC BER Log
+Date: 2025-07-16 21:36:39
+Serial,from Board,to Board,BER, ERRORS
+IBERT QC BER Log
+Date: 2025-07-16 21:42:21
+Serial,from Board,to Board,BER, ERRORS
+IBERT QC BER Log
+Date: 2025-07-16 21:43:08
+Serial,from Board,to Board,BER, ERRORS
+IBERT QC BER Log
+Date: 2025-07-16 21:43:59
+Serial,from Board,to Board,BER, ERRORS
+IBERT QC BER Log
+Date: 2025-07-16 22:01:15
+Serial,from Board,to Board,BER, ERRORS
+IBERT QC BER Log
+Date: 2025-07-16 22:02:38
+Serial,from Board,to Board,BER, ERRORS
+000026A,slot1-->,slot0,0.49690301804228393,629141966137.1958
+000026A,slot2-->,slot0,0.4906303127634753,581031683409.2671
+000026A,slot3-->,slot0,0.059703925716882794,65591042741.91556
+IBERT QC BER Log
+Date: 2025-07-16 22:13:23
+Serial,from Board,to Board,BER, ERRORS
+IBERT QC BER Log
+Date: 2025-07-16 22:14:19
+Serial,from Board,to Board,BER, ERRORS
+000026A,slot1-->,slot0,0.48457512852171708,613683158512.4725
+000026A,slot2-->,slot0,0.4860609070409378,576726023946.4474
+000026A,slot3-->,slot0,0.49127810684011086,541413983569.66223
+00010A,slot0-->,slot1,6.5034684314487482e-13,0.8225482864467001
+00010A,slot2-->,slot1,0.4872538194194464,577409382048.7172
+00010A,slot3-->,slot1,0.49135812428374459,541327333786.5201
+00018A,slot0-->,slot2,6.5027751661557586e-13,0.8231138530622011
+00018A,slot1-->,slot2,0.20788805842713404,246574950737.07504
+00018A,slot3-->,slot2,0.48396736381811961,532779404868.23627
+00006A,slot0-->,slot3,6.5007782857098662e-13,0.8228004251092533
+00006A,slot1-->,slot3,1.3728641767094148e-12,1.6257780138875229
+00006A,slot2-->,slot3,0.15947753050817179,175491087471.06592
+
+=== All BER tests complete ===
+
+IBERT QC BER Log
+Date: 2025-07-16 22:58:55
+Serial,from Board,to Board,BER, ERRORS
+IBERT QC BER Log
+Date: 2025-07-16 23:01:51
+Serial,from Board,to Board,BER, ERRORS
+
+=== BER Test Pass #1 ===
+IBERT QC BER Log
+Date: 2025-07-16 23:10:26
+Serial,from Board,to Board,BER, ERRORS
+
+=== BER Test Pass #1 ===
+=== BER Test Pass #1 complete ===
+
+=== BER Test Pass #2 ===
+IBERT QC BER Log
+Date: 2025-07-16 22:58:55
+Serial,from Board,to Board,BER, ERRORS
+000026A,slot1-->,slot0,1.0127445321834194e-12,1.0
+000026A,slot2-->,slot0,7.0490513204303517e-13,1.0
+000026A,slot3-->,slot0,5.4165508886316843e-13,1.0
+00010A,slot0-->,slot1,1.0110384557415838e-12,0.9999999999999999
+00010A,slot2-->,slot1,6.3330459713817638e-12,9.0
+00010A,slot3-->,slot1,0.17850003296215988,330317577033.0
+00018A,slot0-->,slot2,1.0128734453312101e-12,1.0
+00018A,slot1-->,slot2,7.0731876762633174e-13,1.0
+00018A,slot3-->,slot2,2.3414949452927625e-07,432230.0
+00006A,slot0-->,slot3,1.0125439068320771e-12,0.9999999999999999
+00006A,slot1-->,slot3,7.0138105900896762e-13,1.0
+00006A,slot2-->,slot3,0.00014067547042090402,261827677.0
+=== BER Test Pass #2 complete ===
+
+=== All BER tests complete ===
+
+IBERT QC BER Log
+Date: 2025-07-17 08:25:59
+Serial,from Board,to Board,BER, ERRORS
+
+=== BER Test Pass #1 ===
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #1 complete ===
+
+=== BER Test Pass #2 ===
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #2 complete ===
+
+=== BER Test Pass #3 ===
+IBERT QC BER Log
+Date: 2025-07-16 22:58:55
+Serial,from Board,to Board,BER, ERRORS
+000026A,slot1-->,slot0,1.005235527020936e-12,1.0
+000026A,slot2-->,slot0,6.980055674448504e-13,1.0
+000026A,slot3-->,slot0,5.3475288536532004e-13,1.0
+00010A,slot0-->,slot1,1.001034386770386e-12,1.0
+00010A,slot2-->,slot1,1.3278998078140617e-11,19.0
+00010A,slot3-->,slot1,0.17833889937532255,330850898904.0
+00018A,slot0-->,slot2,1.0120837567680247e-12,1.0
+00018A,slot1-->,slot2,7.0505947834915204e-13,1.0
+00018A,slot3-->,slot2,2.3313860159009661e-07,429511.0
+00006A,slot0-->,slot3,1.0113931100359366e-12,1.0
+00006A,slot1-->,slot3,1.4091846327489344e-12,2.0
+00006A,slot2-->,slot3,0.00014293651418142956,264163552.0
+=== BER Test Pass #3 complete ===
+
+=== All BER tests complete ===
+
+IBERT QC BER Log
+Date: 2025-07-17 09:24:06
+Serial,from Board,to Board,BER, ERRORS
+
+=== BER Test Pass #1 ===
+IBERT QC BER Log
+Date: 2025-07-17 09:24:36
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #1 complete ===
+
+=== BER Test Pass #2 ===
+IBERT QC BER Log
+Date: 2025-07-17 09:36:48
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #2 complete ===
+
+=== BER Test Pass #3 ===
+IBERT QC BER Log
+Date: 2025-07-17 09:48:57
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #3 complete ===
+
+=== BER Test Pass #4 ===
+IBERT QC BER Log
+Date: 2025-07-17 10:01:07
+Serial,from Board,to Board,BER, ERRORS
+000026A,slot1-->,slot0,1.003231152883241e-12,1.0
+000026A,slot2-->,slot0,6.9753089098891733e-13,1.0
+000026A,slot3-->,slot0,5.3495614035448485e-13,1.0
+00010A,slot0-->,slot1,1.0031266068811764e-12,1.0
+00010A,slot2-->,slot1,9.0516643153135073e-12,13.000000000000002
+00010A,slot3-->,slot1,0.17821559040162119,333812641918.0
+00018A,slot0-->,slot2,1.0019281017824113e-12,1.0
+00018A,slot1-->,slot2,6.9538343123829424e-13,1.0
+00018A,slot3-->,slot2,2.2746395727332134e-07,426363.0
+00006A,slot0-->,slot3,1.0063931281266689e-12,1.0
+00006A,slot1-->,slot3,1.4010090563741617e-12,2.0
+00006A,slot2-->,slot3,0.000139998615813547,260177220.00000003
+=== BER Test Pass #4 complete ===
+
+=== All BER tests complete ===
+
+IBERT QC BER Log
+Date: 2025-07-17 10:57:02
+Serial,from Board,to Board,BER, ERRORS
+
+=== BER Test Pass #1 ===
+IBERT QC BER Log
+Date: 2025-07-17 10:57:31
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #1 complete ===
+
+=== BER Test Pass #2 ===
+IBERT QC BER Log
+Date: 2025-07-17 11:05:15
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #2 complete ===
+
+=== BER Test Pass #3 ===
+IBERT QC BER Log
+Date: 2025-07-17 11:12:54
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #3 complete ===
+
+=== BER Test Pass #4 ===
+IBERT QC BER Log
+Date: 2025-07-17 11:20:32
+Serial,from Board,to Board,BER, ERRORS
+000026A,slot1-->,slot0,1.413550603036044e-12,0.9999999999999999
+000026A,slot2-->,slot0,1.7177266369582923e-12,1.0
+000026A,slot3-->,slot0,2.2127556628713256e-12,1.0
+00010A,slot0-->,slot1,1.4137408312994827e-12,1.0
+00010A,slot2-->,slot1,3.4534854849357884e-12,2.0
+00010A,slot3-->,slot1,0.17844484209805192,80128380116.0
+00018A,slot0-->,slot2,1.4125561840987472e-12,1.0
+00018A,slot1-->,slot2,1.718618379740284e-12,1.0
+00018A,slot3-->,slot2,2.2849959951089538e-07,102980.0
+00006A,slot0-->,slot3,1.4124834116874645e-12,1.0
+00006A,slot1-->,slot3,1.7259855766921699e-12,1.0
+00006A,slot2-->,slot3,0.00014005373841664243,62803231.00000001
+=== BER Test Pass #4 complete ===
+
+=== All BER tests complete ===
+
+IBERT QC BER Log
+Date: 2025-07-17 13:59:34
+Serial,from Board,to Board,BER, ERRORS
+
+=== BER Test Pass #1 ===
+IBERT QC BER Log
+Date: 2025-07-17 14:00:02
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #1 complete ===
+
+=== BER Test Pass #2 ===
+IBERT QC BER Log
+Date: 2025-07-17 14:07:46
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #2 complete ===
+
+=== BER Test Pass #3 ===
+IBERT QC BER Log
+Date: 2025-07-17 14:15:26
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #3 complete ===
+
+=== BER Test Pass #4 ===
+IBERT QC BER Log
+Date: 2025-07-17 14:23:04
+Serial,from Board,to Board,BER, ERRORS
+000026A,slot1-->,slot0,3.5273227533699095e-12,1.0
+000026A,slot2-->,slot0,4.3150047231972661e-12,1.0
+000026A,slot3-->,slot0,5.5574706500616186e-12,0.9999999999999999
+00010A,slot0-->,slot1,3.5324866595266861e-12,1.0
+00010A,slot2-->,slot1,4.3186565467382816e-12,1.0
+00010A,slot3-->,slot1,5.5787175253999423e-12,1.0
+00018A,slot0-->,slot2,3.5217704906066619e-12,1.0
+00018A,slot1-->,slot2,4.2772521992929341e-12,1.0
+00018A,slot3-->,slot2,5.4594835220534038e-12,1.0
+00006A,slot0-->,slot3,3.5342711989991631e-12,1.0
+00006A,slot1-->,slot3,4.3227112727883822e-12,1.0
+00006A,slot2-->,slot3,5.5650898554723191e-12,1.0
+=== BER Test Pass #4 complete ===
+
+=== All BER tests complete ===
+
+IBERT QC BER Log
+Date: 2025-07-17 14:36:20
+Serial,from Board,to Board,BER, ERRORS
+
+=== BER Test Pass #1 ===
+IBERT QC BER Log
+Date: 2025-07-17 14:36:47
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #1 complete ===
+
+=== BER Test Pass #2 ===
+IBERT QC BER Log
+Date: 2025-07-17 14:44:31
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #2 complete ===
+
+=== BER Test Pass #3 ===
+IBERT QC BER Log
+Date: 2025-07-17 14:52:10
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #3 complete ===
+
+=== BER Test Pass #4 ===
+IBERT QC BER Log
+Date: 2025-07-17 14:59:49
+Serial,from Board,to Board,BER, ERRORS
+000026A,slot1-->,slot0,3.5297988728480762e-12,1.0
+000026A,slot2-->,slot0,4.3016508485725016e-12,0.9999999999999999
+000026A,slot3-->,slot0,5.5443137202459272e-12,0.9999999999999999
+00010A,slot0-->,slot1,3.5309134660246771e-12,1.0
+00010A,slot2-->,slot1,4.3041789976674704e-12,1.0
+00010A,slot3-->,slot1,5.5192090886481543e-12,1.0
+00018A,slot0-->,slot2,3.5304374878791785e-12,1.0
+00018A,slot1-->,slot2,4.3088378427526332e-12,1.0
+00018A,slot3-->,slot2,5.5566859311826115e-12,1.0
+00006A,slot0-->,slot3,3.5314830843991567e-12,1.0
+00006A,slot1-->,slot3,4.3088750524759795e-12,1.0
+00006A,slot2-->,slot3,5.5526548535957304e-12,1.0
+=== BER Test Pass #4 complete ===
+
+=== All BER tests complete ===
+
+IBERT QC BER Log
+Date: 2025-07-17 15:19:46
+Serial,from Board,to Board,BER, ERRORS
+
+=== BER Test Pass #1 ===
+IBERT QC BER Log
+Date: 2025-07-17 15:20:11
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #1 complete ===
+
+=== BER Test Pass #2 ===
+IBERT QC BER Log
+Date: 2025-07-17 15:27:56
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #2 complete ===
+
+=== BER Test Pass #3 ===
+IBERT QC BER Log
+Date: 2025-07-17 15:35:35
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #3 complete ===
+
+=== BER Test Pass #4 ===
+IBERT QC BER Log
+Date: 2025-07-17 15:43:14
+Serial,from Board,to Board,BER, ERRORS
+000026A,slot1-->,slot0,3.5279325090796192e-12,1.0
+000026A,slot2-->,slot0,4.3022535852026591e-12,1.0
+000026A,slot3-->,slot0,5.5095250604189725e-12,1.0
+00010A,slot0-->,slot1,3.5257636641770447e-12,1.0
+00010A,slot2-->,slot1,4.2835420374163684e-12,1.0
+00010A,slot3-->,slot1,5.4860639949953122e-12,1.0
+00018A,slot0-->,slot2,3.3380486261068661e-12,1.0
+00018A,slot1-->,slot2,3.2820474257297117e-12,0.9999999999999999
+00018A,slot3-->,slot2,3.8295341874187797e-12,1.0
+00006A,slot0-->,slot3,3.5371419859419564e-12,1.0
+00006A,slot1-->,slot3,4.2577042924145966e-12,1.0
+00006A,slot2-->,slot3,5.2864671638260571e-12,1.0
+=== BER Test Pass #4 complete ===
+
+=== All BER tests complete ===
+

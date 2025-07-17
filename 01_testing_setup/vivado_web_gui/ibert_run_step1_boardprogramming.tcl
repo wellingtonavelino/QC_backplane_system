@@ -23,6 +23,8 @@ set log_fh   [open $log_file a]
 # Write a title and timestamp
 puts $log_fh "IBERT QC BER Log"
 puts $log_fh "Date: [clock format [clock seconds] -format {%Y-%m-%d %H:%M:%S}]"
+puts "PYTHON_OUT: IBERT QC BER Log"
+puts "PYTHON_OUT: Date: [clock format [clock seconds] -format {%Y-%m-%d %H:%M:%S}]"
 #puts $log_fh ""
 #puts $log_fh "Serial,Link,BER"
 puts $log_fh "Serial,from Board,to Board,BER, ERRORS"

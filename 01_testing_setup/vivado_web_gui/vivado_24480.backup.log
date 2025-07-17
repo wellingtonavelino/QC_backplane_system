@@ -1,0 +1,79 @@
+#-----------------------------------------------------------
+# Vivado v2022.2 (64-bit)
+# SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
+# IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+# Start of session at: Thu Jul 17 15:19:07 2025
+# Process ID: 24480
+# Current directory: C:/Wellington/iBERT_CRS_Boards/QC_backplane_system/01_testing_setup/vivado_web_gui
+# Command line: vivado.exe -mode batch -source C:\Users\COSMOL~1\AppData\Local\Temp\tmp1rbgfkb0.tcl
+# Log file: C:/Wellington/iBERT_CRS_Boards/QC_backplane_system/01_testing_setup/vivado_web_gui/vivado.log
+# Journal file: C:/Wellington/iBERT_CRS_Boards/QC_backplane_system/01_testing_setup/vivado_web_gui\vivado.jou
+# Running On: Royal, OS: Windows, CPU Frequency: 2995 MHz, CPU Physical cores: 24, Host memory: 68549 MB
+#-----------------------------------------------------------
+source {C:\Users\COSMOL~1\AppData\Local\Temp\tmp1rbgfkb0.tcl}
+# source "print_latest_ber_results.tcl"
+## set log_file "ibert_qc_ber.log"
+## if {![file exists $log_file]} {
+##     puts "ERROR: File '$log_file' not found."
+##     exit 1
+## }
+## set fh [open $log_file r]
+## set lines [split [read $fh] "\n"]
+## close $fh
+## set starts {}
+## for {set i 0} {$i < [llength $lines]} {incr i} {
+##     if {[string match "IBERT QC BER Log*" [lindex $lines $i]]} {
+##         lappend starts $i
+##     }
+## }
+## if {[llength $starts] == 0} {
+##     puts "No block found in log."
+##     exit 0
+## }
+## set start_idx [lindex $starts end]
+## set block [lrange $lines $start_idx end]
+## set header_line ""
+## set data_lines {}
+## foreach line $block {
+##     if {[string match "Serial,*" $line]} {
+##         set header_line $line
+##         continue
+##     }
+##     if {[string match "===*" $line] || $line eq ""} {
+##         break
+##     }
+##     if {$header_line ne ""} {
+##         lappend data_lines $line
+##     }
+## }
+## if {$header_line eq "" || [llength $data_lines] == 0} {
+##     puts "Block found, but no data available."
+##     exit 0
+## }
+## puts "\n Lastest BER Results:"
+
+ Lastest BER Results:
+## puts "---------------------------"
+---------------------------
+## puts $header_line
+Serial,from Board,to Board,BER, ERRORS
+## foreach line $data_lines {
+##     puts $line
+## }
+000026A,slot1-->,slot0,3.5297988728480762e-12,1.0
+000026A,slot2-->,slot0,4.3016508485725016e-12,0.9999999999999999
+000026A,slot3-->,slot0,5.5443137202459272e-12,0.9999999999999999
+00010A,slot0-->,slot1,3.5309134660246771e-12,1.0
+00010A,slot2-->,slot1,4.3041789976674704e-12,1.0
+00010A,slot3-->,slot1,5.5192090886481543e-12,1.0
+00018A,slot0-->,slot2,3.5304374878791785e-12,1.0
+00018A,slot1-->,slot2,4.3088378427526332e-12,1.0
+00018A,slot3-->,slot2,5.5566859311826115e-12,1.0
+00006A,slot0-->,slot3,3.5314830843991567e-12,1.0
+00006A,slot1-->,slot3,4.3088750524759795e-12,1.0
+00006A,slot2-->,slot3,5.5526548535957304e-12,1.0
+## puts "---------------------------"
+---------------------------
+## puts "Shown Lines: [llength $data_lines]"
+Shown Lines: 12
+INFO: [Common 17-206] Exiting Vivado at Thu Jul 17 15:19:09 2025...

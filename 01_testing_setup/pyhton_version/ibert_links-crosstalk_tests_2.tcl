@@ -214,16 +214,17 @@ foreach entry $boards {
 		
 		# Additional signal integrity settings
 		#set_property TXPRE {3.90 dB (01111)} $linkObj
-		#set_property TXPRE {1.87 dB (01000)} $linkObj
-		set_property TXPRE {0.01 dB (00000)} $linkObj
+		set_property TXPRE {1.87 dB (01000)} $linkObj
+		#set_property TXPRE {0.01 dB (00000)} $linkObj
 		after 10000		
 		#set_property TXPOST {3.99 dB (01111)} $linkObj
-		#set_property TXPOST {2.98 dB (01011)} $linkObj
-		set_property TXPOST {0.00 dB (00000)} $linkObj
+		set_property TXPOST {2.98 dB (01011)} $linkObj
+		#set_property TXPOST {0.00 dB (00000)} $linkObj
 		after 10000
 		#set_property TXDIFFSWING {730 mV (01101)} $linkObj
 		#set_property TXDIFFSWING {780 mV (10000)} $linkObj
-		set_property TXDIFFSWING {390 mV (00000)} $linkObj
+		#set_property TXDIFFSWING {390 mV (00000)} $linkObj
+		set_property TXDIFFSWING {1040 mV (11111)} $linkObj
 		after 10000
 
 		
