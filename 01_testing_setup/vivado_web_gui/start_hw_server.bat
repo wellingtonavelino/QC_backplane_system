@@ -1,0 +1,3 @@
+@echo off
+echo Starting Xilinx hw_server...
+start "" "C:\Xilinx\Vivado\2022.2\bin\hw_server.bat"

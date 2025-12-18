@@ -1,6 +1,6 @@
 # Connect to remote hw_server on Vivado Lab machine
 # replace IP address to the machine where the board is connected
-connect -url tcp:10.8.0.2:3121
+connect -url tcp:10.10.10.82:3121
 
 # Wait a bit to ensure connection
 after 1000

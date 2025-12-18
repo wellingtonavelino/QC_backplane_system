@@ -1,19 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Vivado Tcl Launcher</title>
+    <title>t0.technology - GUI</title>
     <style>
-        body { font-family: sans-serif; padding: 2em; max-width: 800px; margin: auto; }
-        button, input, select { font-size: 16px; margin-top: 10px; padding: 8px; width: 100%; }
-        textarea { width: 100%; height: 300px; margin-top: 10px; font-family: monospace; }
-        .status { margin-top: 20px; font-weight: bold; }
-        table { margin-top: 30px; border-collapse: collapse; width: 100%; }
-        th, td { padding: 6px; border: 1px solid #ccc; text-align: center; font-size: 9pt; }
+        :root {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --input-bg: #1e1e1e;
+            --border-color: #555;
+        }
 
-        /* Spinner */
+        body.light {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --input-bg: #f5f5f5;
+            --border-color: #ccc;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: sans-serif;
+            padding: 2em;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        button, input, select {
+            font-size: 16px;
+            margin-top: 10px;
+            padding: 8px;
+            width: 100%;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            margin-top: 10px;
+            font-family: monospace;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .status {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        table {
+            margin-top: 30px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 6px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 9pt;
+            background-color: var(--input-bg);
+        }
+
+        form label {
+            display: block;
+            margin-top: 20px;
+        }
+
         .spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #444;
+            border-top: 4px solid #888;
             border-radius: 50%;
             width: 20px;
             height: 20px;
@@ -22,29 +81,43 @@
             vertical-align: middle;
             margin-right: 10px;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-    </style>
 
-    {% if running %}
-    <!-- Optional: auto-refresh every 10 seconds while running -->
-    <meta http-equiv="refresh" content="20">
-    {% endif %}
+        /* Toggle switch */
+        .toggle-container {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Vivado Tcl Launcher (Live)</h1>
-    <form method="POST">
-        <label for="vivado_path">Vivado Executable Path:</label>
-        <input type="text" id="vivado_path" name="vivado_path" value="{{ vivado_path }}" placeholder="e.g. C:\Xilinx\Vivado\2023.2\bin\vivado.bat" required>
+    <h1>t0.technology - CRS Boards UI</h1>
 
-		<div style="margin-top: 10px; display: flex; align-items: center; gap: 10px;">
-		<label for="serial_number" style="white-space: nowrap;"></strong>Serial Number (4 digits):</strong></label>
-		<input type="text" id="serial_number" name="serial_number" pattern="\d{4}" maxlength="4" style="width: 100px;" disabled>
-		</div>
-		<!-- <label for="serial_number">Serial Number (4 digits):</label>
-		<input type="text" id="serial_number" name="serial_number" pattern="\d{4}" maxlength="4" required> --->
+    <div class="toggle-container">
+        <label for="theme-toggle"><strong>Dark Mode</strong></label>
+        <input type="checkbox" id="theme-toggle">
+    </div>
+
+    <form method="POST">
+        <label for="vivado_path">Vivado/Vitis Executable Path:</label>
+        <input type="text" id="vivado_path" name="vivado_path" value="{{ vivado_path }}" required>
+
+        <label for="script_mode">Script Mode:</label>
+        <select id="script_mode" name="script_mode" required {% if running %}disabled{% endif %}>
+            <option value="ber" {% if script_mode == 'ber' %}selected{% endif %}>BER Test</option>
+            <option value="flash" {% if script_mode == 'flash' %}selected{% endif %}>QSPI Flash</option>
+        </select>
+
+        <div style="margin-top: 10px; display: flex; align-items: center; gap: 10px;">
+            <label for="serial_number" style="white-space: nowrap;"><strong>Serial Number (4 digits):</strong></label>
+            <input type="text" id="serial_number" name="serial_number" pattern="\d{4}" maxlength="4" style="width: 100px;">
+        </div>
 
         <label for="tcl_script">Choose Tcl Script:</label>
         <select id="tcl_script" name="tcl_script" required {% if running %}disabled{% endif %}>
@@ -54,10 +127,14 @@
         </select>
 
         <button type="submit" id="run-button" {% if running %}disabled{% endif %}>Run Script</button>
-		
-		<button type="button" onclick="window.location.href='/shutdown'" style="background-color: crimson; color: white;">
-			Exit
-		</button>
+
+        <button type="button" onclick="window.location.href='/shutdown'" style="background-color: crimson; color: white;">
+            Exit
+        </button>
+
+        <button type="button" onclick="document.getElementById('log_output').value = ''; localStorage.removeItem('vivado_log')">
+            Clear Log
+        </button>
 
         {% if running %}
         <div id="spinner" style="margin-top: 10px;">
@@ -78,12 +155,57 @@
     {% endif %}
 
     <script>
+        // === Restore log content ===
         const logBox = document.getElementById("log_output");
         const source = new EventSource("/logs");
+        if (localStorage.getItem("vivado_log")) {
+            logBox.value = localStorage.getItem("vivado_log");
+        }
+
         source.onmessage = function(e) {
             logBox.value += e.data + "\n";
             logBox.scrollTop = logBox.scrollHeight;
+            localStorage.setItem("vivado_log", logBox.value);
         };
+
+        // === Enable/disable serial number field based on mode ===
+        function toggleSerialField() {
+            const mode = document.getElementById("script_mode").value;
+            document.getElementById("serial_number").disabled = (mode !== "flash");
+        }
+        document.getElementById("script_mode").addEventListener("change", toggleSerialField);
+        window.onload = toggleSerialField;
+
+        // === Poll for script completion ===
+        let pollingLoop = setInterval(() => {
+            fetch('/status')
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.running) {
+                        clearInterval(pollingLoop);
+                        document.getElementById("run-button").disabled = false;
+                        document.getElementById("script_mode").disabled = false;
+                        const spinner = document.getElementById("spinner");
+                        if (spinner) spinner.style.display = "none";
+                        console.log("✅ Script completed.");
+                        location.reload();
+                    }
+                });
+        }, 20000);
+
+        // === Theme toggle ===
+        const themeToggle = document.getElementById("theme-toggle");
+        themeToggle.addEventListener("change", () => {
+            document.body.classList.toggle("light", !themeToggle.checked);
+            localStorage.setItem("theme", themeToggle.checked ? "dark" : "light");
+        });
+
+        // Load theme preference
+        window.addEventListener("DOMContentLoaded", () => {
+            const theme = localStorage.getItem("theme") || "dark";
+            document.body.classList.toggle("light", theme === "light");
+            themeToggle.checked = theme === "dark";
+        });
     </script>
 </body>
 </html>

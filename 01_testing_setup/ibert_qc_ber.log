@@ -921,3 +921,87 @@ Serial,from Board,to Board,BER, ERRORS
 
 === All BER tests complete ===
 
+IBERT QC BER Log
+Date: 2025-07-17 22:50:41
+Serial,from Board,to Board,BER, ERRORS
+
+=== BER Test Pass #1 ===
+IBERT QC BER Log
+Date: 2025-07-17 22:53:13
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #1 complete ===
+
+=== BER Test Pass #2 ===
+IBERT QC BER Log
+Date: 2025-07-17 23:00:54
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #2 complete ===
+
+=== BER Test Pass #3 ===
+IBERT QC BER Log
+Date: 2025-07-17 23:08:35
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #3 complete ===
+
+=== BER Test Pass #4 ===
+IBERT QC BER Log
+Date: 2025-07-17 23:16:20
+Serial,from Board,to Board,BER, ERRORS
+00006A,slot1-->,slot0,0.52500000014782067,149167272324.0
+00006A,slot2-->,slot0,4.262712355162016e-12,1.0
+00006A,slot3-->,slot0,5.4047728775318006e-12,1.0
+000026A,slot0-->,slot1,3.5236073453947473e-12,1.0
+000026A,slot2-->,slot1,4.2739723954907065e-12,1.0
+000026A,slot3-->,slot1,5.4271040634326729e-12,1.0
+00010A,slot0-->,slot2,3.5217025321426057e-12,1.0
+00010A,slot1-->,slot2,4.2770852905810256e-12,1.0
+00010A,slot3-->,slot2,5.4969179939558204e-12,1.0
+00018A,slot0-->,slot3,3.5238437363989234e-12,1.0
+00018A,slot1-->,slot3,4.2791943218514708e-12,1.0
+00018A,slot2-->,slot3,5.4468395764815378e-12,1.0
+=== BER Test Pass #4 complete ===
+
+=== All BER tests complete ===
+
+IBERT QC BER Log
+Date: 2025-07-18 08:45:43
+Serial,from Board,to Board,BER, ERRORS
+
+=== BER Test Pass #1 ===
+IBERT QC BER Log
+Date: 2025-07-18 08:47:52
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #1 complete ===
+
+=== BER Test Pass #2 ===
+IBERT QC BER Log
+Date: 2025-07-18 08:55:28
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #2 complete ===
+
+=== BER Test Pass #3 ===
+IBERT QC BER Log
+Date: 2025-07-18 09:03:04
+Serial,from Board,to Board,BER, ERRORS
+=== BER Test Pass #3 complete ===
+
+=== BER Test Pass #4 ===
+IBERT QC BER Log
+Date: 2025-07-18 09:10:39
+Serial,from Board,to Board,BER, ERRORS
+00006A,slot1-->,slot0,3.5395405733081761e-12,1.0
+00006A,slot2-->,slot0,4.3370585147753388e-12,1.0
+00006A,slot3-->,slot0,5.6304477399923521e-12,1.0
+000026A,slot0-->,slot1,3.5364899893408238e-12,1.0
+000026A,slot2-->,slot1,4.3388789653828836e-12,0.9999999999999999
+000026A,slot3-->,slot1,5.6446032102240257e-12,1.0
+00010A,slot0-->,slot2,3.5376436620676499e-12,1.0
+00010A,slot1-->,slot2,4.3379630798405414e-12,1.0
+00010A,slot3-->,slot2,5.6463234650672589e-12,1.0
+00018A,slot0-->,slot3,3.5381287839595641e-12,1.0
+00018A,slot1-->,slot3,4.3436687155482113e-12,1.0
+00018A,slot2-->,slot3,5.6480121105886605e-12,0.9999999999999999
+=== BER Test Pass #4 complete ===
+
+=== All BER tests complete ===
+

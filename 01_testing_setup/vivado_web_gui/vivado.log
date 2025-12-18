@@ -2,78 +2,29 @@
 # Vivado v2022.2 (64-bit)
 # SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
 # IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
-# Start of session at: Thu Jul 17 15:52:02 2025
-# Process ID: 32168
+# Start of session at: Wed Dec 17 18:19:13 2025
+# Process ID: 76128
 # Current directory: C:/Wellington/iBERT_CRS_Boards/QC_backplane_system/01_testing_setup/vivado_web_gui
-# Command line: vivado.exe -mode batch -source C:\Users\COSMOL~1\AppData\Local\Temp\tmp2lnqp0nj.tcl
+# Command line: vivado.exe -mode batch -source C:\Users\COSMOL~1\AppData\Local\Temp\tmp1pu7rgdx.tcl
 # Log file: C:/Wellington/iBERT_CRS_Boards/QC_backplane_system/01_testing_setup/vivado_web_gui/vivado.log
 # Journal file: C:/Wellington/iBERT_CRS_Boards/QC_backplane_system/01_testing_setup/vivado_web_gui\vivado.jou
 # Running On: Royal, OS: Windows, CPU Frequency: 2995 MHz, CPU Physical cores: 24, Host memory: 68549 MB
 #-----------------------------------------------------------
-source {C:\Users\COSMOL~1\AppData\Local\Temp\tmp2lnqp0nj.tcl}
-# source "print_latest_ber_results.tcl"
-## set log_file "ibert_qc_ber.log"
-## if {![file exists $log_file]} {
-##     puts "ERROR: File '$log_file' not found."
-##     exit 1
+source {C:\Users\COSMOL~1\AppData\Local\Temp\tmp1pu7rgdx.tcl}
+# source "program_qspi_flash_xsct.tcl"
+## if {![info exists target_id]} {
+##     set target_id 12
 ## }
-## set fh [open $log_file r]
-## set lines [split [read $fh] "\n"]
-## close $fh
-## set starts {}
-## for {set i 0} {$i < [llength $lines]} {incr i} {
-##     if {[string match "IBERT QC BER Log*" [lindex $lines $i]]} {
-##         lappend starts $i
-##     }
-## }
-## if {[llength $starts] == 0} {
-##     puts "No block found in log."
-##     exit 0
-## }
-## set start_idx [lindex $starts end]
-## set block [lrange $lines $start_idx end]
-## set header_line ""
-## set data_lines {}
-## foreach line $block {
-##     if {[string match "Serial,*" $line]} {
-##         set header_line $line
-##         continue
-##     }
-##     if {[string match "===*" $line] || $line eq ""} {
-##         break
-##     }
-##     if {$header_line ne ""} {
-##         lappend data_lines $line
-##     }
-## }
-## if {$header_line eq "" || [llength $data_lines] == 0} {
-##     puts "Block found, but no data available."
-##     exit 0
-## }
-## puts "\n Lastest BER Results:"
+## puts "🔌 Connecting to hw_server..."
+🔌 Connecting to hw_server...
+## connect -url tcp:127.0.0.1:3121
+invalid command name "connect"
+ambiguous command name "connect": connect_debug_cores connect_debug_port connect_net
+    while executing
+"connect -url tcp:127.0.0.1:3121"
+    (file "program_qspi_flash_xsct.tcl" line 14)
 
- Lastest BER Results:
-## puts "---------------------------"
----------------------------
-## puts $header_line
-Serial,from Board,to Board,BER, ERRORS
-## foreach line $data_lines {
-##     puts $line
-## }
-000026A,slot1-->,slot0,3.5279325090796192e-12,1.0
-000026A,slot2-->,slot0,4.3022535852026591e-12,1.0
-000026A,slot3-->,slot0,5.5095250604189725e-12,1.0
-00010A,slot0-->,slot1,3.5257636641770447e-12,1.0
-00010A,slot2-->,slot1,4.2835420374163684e-12,1.0
-00010A,slot3-->,slot1,5.4860639949953122e-12,1.0
-00018A,slot0-->,slot2,3.3380486261068661e-12,1.0
-00018A,slot1-->,slot2,3.2820474257297117e-12,0.9999999999999999
-00018A,slot3-->,slot2,3.8295341874187797e-12,1.0
-00006A,slot0-->,slot3,3.5371419859419564e-12,1.0
-00006A,slot1-->,slot3,4.2577042924145966e-12,1.0
-00006A,slot2-->,slot3,5.2864671638260571e-12,1.0
-## puts "---------------------------"
----------------------------
-## puts "Shown Lines: [llength $data_lines]"
-Shown Lines: 12
-INFO: [Common 17-206] Exiting Vivado at Thu Jul 17 15:52:04 2025...
+    while executing
+"source "program_qspi_flash_xsct.tcl""
+    (file "C:\Users\COSMOL~1\AppData\Local\Temp\tmp1pu7rgdx.tcl" line 1)
+INFO: [Common 17-206] Exiting Vivado at Wed Dec 17 18:19:15 2025...

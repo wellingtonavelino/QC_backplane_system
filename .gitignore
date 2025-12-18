@@ -1,0 +1,23 @@
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb~
+
+# Vivado / Vitis
+*.jou
+*.log
+*.backup.*
+*.str
+*.wdb
+*.rpt
+
+# Imagens geradas
+*.jpg
+*.png
+
+# Office temporário
+~$*.pptx
+~$*.docx
+~$*.xlsx
+
+# Python
+__pycache__/
