@@ -5,7 +5,8 @@ after 1000
 
 # Select known powered-on board (assumed to be target 12)
 puts "Selecting default target 12 (Cortex-A53 #0)..."
-target 2
+#target 2
+targets -set -filter {name =~ "*Cortex-A53*#0*"}
 
 # Get normalized script path and directory
 set script_path [file normalize [info script]]
@@ -24,23 +25,46 @@ puts "U-BOOT.ITB path: $boot_itb_path"
 # Build and run the shell command
 #set flash_cmd "program_flash -fsbl \"$fsbl_path\" -f \"$boot_bin_path\" -offset 0 -flash_type qspi_single"
 #set flash_cmd "program_flash -fsbl fsbl.elf -f BOOT.bin -offset 0 -flash_type qspi-x8-dual_parallel"
-set flash_cmd "program_flash -f boot.bin -offset 0 -flash_type qspi-x1-single -fsbl fsbl.elf -verify"
+#set flash_cmd "program_flash -f boot.bin -offset 0 -flash_type qspi-x1-single -fsbl fsbl.elf -verify"
 #set flash_cmd "program_flash -f \"$boot_bin_path\" -offset 0 -flash_type qspi-x8-dual_parallel -fsbl \"$fsbl_path\" -blank_check -verify"
+puts "1. Programming BOOT.BIN..."
+if {[catch {
+    set flash_cmd "program_flash -f $boot_bin_path -offset 0 -flash_type qspi-x1-single -fsbl $fsbl_path -verify"
+	set result [exec {*}$flash_cmd]
+	puts "📄 program_flash output:"
+	puts $result
 
-puts "⚡ Running shell command:\n$flash_cmd"
+} err]} {
+    puts "X BOOT.BIN programming failed:"
+    puts $err
+    exit 1
+}
+
+
+#puts "⚡ Running shell command:\n$flash_cmd"
 
 # Execute flash tool
-set result [exec {*}$flash_cmd]
+#set result [exec {*}$flash_cmd]
 
-after 4000
-set flash_cmd "program_flash -f u-boot.itb -offset 0x100000 -flash_type qspi-x1-single -fsbl fsbl.elf -verify"
-puts "⚡ Running shell command:\n$flash_cmd"
-set result [exec {*}$flash_cmd]
+after 1000
+#set flash_cmd "program_flash -f u-boot.itb -offset 0x100000 -flash_type qspi-x1-single -fsbl fsbl.elf -verify"
+#puts "⚡ Running shell command:\n$flash_cmd"
+#set result [exec {*}$flash_cmd]
+puts "2. Programming U-BOOT.ITB..."
+if {[catch {
+    set flash_cmd "program_flash -f $boot_itb_path -offset 0x100000 -flash_type qspi-x1-single -fsbl $fsbl_path -verify"
+	set result [exec {*}$flash_cmd]
+	puts "📄 program_flash output:"
+	puts $result
+
+} err]} {
+    puts "X U-BOOT.ITB programming failed:"
+    puts $err
+    exit 1
+}
+
 
 # Show output
-puts "📄 Output from program_flash:"
-puts $result
-
 puts "🔁 Issuing power-on reset..."
 rst -por
 puts "✅ Reset done. The board should now boot from QSPI."

@@ -18,6 +18,8 @@ output_queue = queue.Queue()
 status = "Idle"
 running = False
 result_table = ""
+script_mode_selected = "ber"
+
 
 # Helper to show Python-side logs in browser
 def log_to_gui(message):
@@ -92,6 +94,42 @@ def is_hw_server_running(host='127.0.0.1', port=3121):
             return True
         except (socket.timeout, ConnectionRefusedError):
             return False
+            
+def resolve_vitis_settings_from_input(user_path: str):
+    """
+    Accept these arguments:
+      - direct path for settings64.bat
+      - path for the Vitis folder  (ex: C:\\Xilinx\\Vitis\\2022.2)
+      - path for vivado.exe (It is not for flash option)
+    Return full path of settings64.bat (if exists).
+    """
+    if not user_path:
+        return None
+
+    p = user_path.strip().strip('"')
+
+    # Case 1: User already specify settings64.bat
+    if p.lower().endswith("settings64.bat") and os.path.isfile(p):
+        return p
+
+    # Case 2: User already specify Vitis folder
+    # Ex: C:\Xilinx\Vitis\2022.2  -> C:\Xilinx\Vitis\2022.2\settings64.bat
+    if os.path.isdir(p):
+        candidate = os.path.join(p, "settings64.bat")
+        if os.path.isfile(candidate):
+            return candidate
+
+    # Case 3: User uses vivado.exe or vitis.exe etc (não é settings)
+    # Try find directories and settings64.bat
+    base_dir = os.path.dirname(p)
+    for _ in range(4):
+        candidate = os.path.join(base_dir, "settings64.bat")
+        if os.path.isfile(candidate):
+            return candidate
+        base_dir = os.path.dirname(base_dir)
+
+    return None
+
 
 def run_vivado(vivado_exec, script, script_mode, serial_number):
     global status, running, output_queue, result_table
@@ -111,11 +149,23 @@ def run_vivado(vivado_exec, script, script_mode, serial_number):
 
         if script_mode == "flash":
             log_to_gui("[PYTHON] Script type: XSCT (Vitis scripting)")
+            vitis_settings = resolve_vitis_settings_from_input(vivado_exec)
+            if not vitis_settings:
+                raise FileNotFoundError(
+                    "Could not find Vitis settings64.bat.\n"
+                    "Please set 'Vivado/Vitis Executable Path' to something like:\n"
+                    r"  C:\Xilinx\Vitis\2022.2\settings64.bat"
+                )
+
+            log_to_gui(f"[PYTHON] Using Vitis environment: {vitis_settings}")
+
             with tempfile.NamedTemporaryFile(mode="w", suffix=".bat", delete=False) as temp_bat:
-                temp_bat.write(f'call "{vivado_exec}"\n')
+                temp_bat.write(f'call "{vitis_settings}"\n')
                 temp_bat.write(f'xsct "{script}"\n')
                 temp_bat_path = temp_bat.name
+
             command = ["cmd", "/c", temp_bat_path]
+
 
         elif ext == ".tcl":
             log_to_gui("[PYTHON] Script type: TCL (Vivado batch mode)")
@@ -151,7 +201,10 @@ def run_vivado(vivado_exec, script, script_mode, serial_number):
         )
 
         log_to_gui("[PYTHON] Waiting for process to complete...")
-        stdout_data, _ = process.communicate()
+        # stdout_data, _ = process.communicate()
+        for line in process.stdout:
+            output_queue.put(f"[SCRIPT] {line.rstrip()}")
+        return_code = process.wait()
         return_code = process.returncode
 
         success_marker_found = False
@@ -195,7 +248,11 @@ def home():
     global vivado_path, script_name, status, running, result_table
 
     script_list = list_script_files()
-    script_mode = request.form.get("script_mode", "ber")
+    # script_mode = request.form.get("script_mode", "ber")
+    global script_mode_selected
+    script_mode = request.form.get("script_mode", script_mode_selected)
+    selected_script = request.form.get("tcl_script", script_name)
+
 
     if not is_hw_server_running():
         status = "⚠️ Warning: hw_server is not running on localhost:3121"
@@ -219,15 +276,21 @@ def home():
                 args=(vivado_path, script_name, script_mode, serial_number),
                 daemon=True
             ).start()
+        
+        script_mode_selected = script_mode
+        # script_name = script_mode
 
         return redirect(url_for("home"))
 
     return render_template("index.html",
-                           script_list=script_list,
-                           vivado_path=vivado_path,
-                           status=status,
-                           running=running,
-                           result_table=result_table)
+                       script_list=script_list,
+                       vivado_path=vivado_path,
+                       status=status,
+                       running=running,
+                       result_table=result_table,
+                       script_mode=script_mode_selected,
+                       tcl_script=script_name)
+
 
 @app.route("/status")
 def check_status():

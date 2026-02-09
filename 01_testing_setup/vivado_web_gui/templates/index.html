@@ -185,10 +185,13 @@
                         clearInterval(pollingLoop);
                         document.getElementById("run-button").disabled = false;
                         document.getElementById("script_mode").disabled = false;
+						document.getElementById("tcl_script").disabled = false;
+						toggleSerialField();
                         const spinner = document.getElementById("spinner");
                         if (spinner) spinner.style.display = "none";
                         console.log("✅ Script completed.");
-                        location.reload();
+                        //location.reload();
+						document.querySelector(".status").innerText = "Status: Done";
                     }
                 });
         }, 20000);

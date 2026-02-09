@@ -171,7 +171,8 @@ set all_tests {}
 # Phase 2: BER tests on each board, one at a time
 # ============================================================================= #
 
-for {set pass 1} {$pass <= 4} {incr pass} {
+set total_passes 6
+for {set pass 1} {$pass <= $total_passes} {incr pass} {
     puts "\n=== Starting BER Test Pass #$pass ==="
     puts $log_fh "\n=== BER Test Pass #$pass ==="
 	puts $log_fh "IBERT QC BER Log"
@@ -211,7 +212,7 @@ for {set pass 1} {$pass <= 4} {incr pass} {
 
 		# 2.2) Locate and refresh the FPGA device
 		set fpga_dev [lindex [get_hw_devices -of_objects $t] 0]
-		after 500
+		#after 500
 		refresh_hw_device -force_poll $fpga_dev
 		after 500
 		
@@ -225,7 +226,7 @@ for {set pass 1} {$pass <= 4} {incr pass} {
 				after 1000
 			}
 			commit_hw_sio -non_blocking $existing_links
-			after 8000
+			after 1000
 		} else {
 			puts "No existing links found to delete."
 		}
@@ -355,8 +356,8 @@ for {set pass 1} {$pass <= 4} {incr pass} {
 			set elapsed 0
 			set timeout 10000
 			while {$elapsed < $timeout} {
-				refresh_hw_device -force_poll [get_hw_devices]
-				after 800
+				#refresh_hw_device -force_poll [get_hw_devices]   # removed to be faster
+				#after 800
 				set cdrlock [get_property PORT.RXCDRLOCK $linkObj]
 				if {$cdrlock} {
 					puts " CDR LOCKED after $elapsed sec"
@@ -375,7 +376,7 @@ for {set pass 1} {$pass <= 4} {incr pass} {
 			set_property LOGIC.MGT_ERRCNT_RESET_CTRL 1 $lnk
 			after 800
 			commit_hw_sio -non_blocking $lnk
-			after 8000
+			after 1000
 		}
 		# de-assert reset
 		foreach pair $linkObjs {
@@ -383,7 +384,7 @@ for {set pass 1} {$pass <= 4} {incr pass} {
 			set_property LOGIC.MGT_ERRCNT_RESET_CTRL 0 $lnk
 			after 1000
 			commit_hw_sio -non_blocking $lnk
-			after 8000
+			after 1000
 		}
 		puts "OK: error counters cleared"
 		
@@ -411,14 +412,23 @@ for {set pass 1} {$pass <= 4} {incr pass} {
 			# Wait for stabilization before starting the test
 			#wait_for_stable_ber $linkObj $threshold 10000
 
-			refresh_hw_device -force_poll $fpga_dev
-			after 800
+			#refresh_hw_device -force_poll $fpga_dev    # removed to be faster
+			#after 800
 
 			puts "\nINFO: $label waiting for more than $threshold bits"
 			set bits 0
 			set link_error 0
-			while {$bits < $threshold} {
-				refresh_hw_device -force_poll $fpga_dev
+			set warmup_ber_threshold 25000000000   ;# 25 Gbits
+			set ber_threshold_bits $threshold
+			if {$pass < $total_passes} {
+				# Warm-up passes (DFE stabilization)
+				set ber_threshold_bits $warmup_ber_threshold  ;# 50 Gbits
+			} else {
+				# Final QC measurement
+				set ber_threshold_bits $threshold   ;# from config file (e.g. 10 Tb)
+			}
+			while {$bits < $ber_threshold_bits} {
+				#refresh_hw_device -force_poll $fpga_dev   #removed to make faster
 				after 500
 				set bits [get_property RX_RECEIVED_BIT_COUNT $linkObj]
 				set ber [get_property RX_BER $linkObj]
@@ -428,7 +438,7 @@ for {set pass 1} {$pass <= 4} {incr pass} {
 			puts "  CDR Locked: [get_property PORT.RXCDRLOCK $linkObj]"
 			puts "  PRBS Locked: [get_property PORT.RXPRBSLOCKED $linkObj]"
 			puts "  RX Valid: [get_property PORT.RXDATAVALID $linkObj]"
-			refresh_hw_device -force_poll $fpga_dev
+			#refresh_hw_device -force_poll $fpga_dev
 			#after 500
 			set link_error [expr {$bits*$ber}]
 			puts "RESULT: $serial - $bp_path -  bits=$bits   BER=$ber  ERRORS=$link_error"
