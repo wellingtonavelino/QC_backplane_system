@@ -174,25 +174,23 @@ def run_vivado(vivado_exec, script, script_mode, serial_number):
 
             # command = ["cmd", "/c", temp_bat_path]
             
-        if IS_WINDOWS:
-            with tempfile.NamedTemporaryFile(mode="w", suffix=".bat", delete=False) as temp:
-                temp.write(f'call "{vitis_settings}"\n')
-                temp.write(f'xsct "{script}"\n')
-                temp_path = temp.name
+            if IS_WINDOWS:
+                with tempfile.NamedTemporaryFile(mode="w", suffix=".bat", delete=False) as temp:
+                    temp.write(f'call "{vitis_settings}"\n')
+                    temp.write(f'xsct "{script}"\n')
+                    temp_path = temp.name
 
-            command = ["cmd", "/c", temp_path]
+                command = ["cmd", "/c", temp_path]
 
-        else:  # Linux
-            with tempfile.NamedTemporaryFile(mode="w", suffix=".sh", delete=False) as temp:
-                temp.write("#!/bin/bash\n")
-                temp.write(f'source "{vitis_settings}"\n')
-                temp.write(f'xsct "{script}"\n')
-                temp_path = temp.name
+            else:  # Linux
+                with tempfile.NamedTemporaryFile(mode="w", suffix=".sh", delete=False) as temp:
+                    temp.write("#!/bin/bash\n")
+                    temp.write(f'source "{vitis_settings}"\n')
+                    temp.write(f'xsct "{script}"\n')
+                    temp_path = temp.name
     
-            os.chmod(temp_path, 0o755)
-            command = ["bash", temp_path]
-
-
+                os.chmod(temp_path, 0o755)
+                command = ["bash", temp_path]
 
         elif ext == ".tcl":
             log_to_gui("[PYTHON] Script type: TCL (Vivado batch mode)")
@@ -240,10 +238,10 @@ def run_vivado(vivado_exec, script, script_mode, serial_number):
             # if "SUCCESS: Flash programming completed!" in line:
                 # success_marker_found = True
                 
-        for line in process.stdout:
-            output_queue.put(f"[SCRIPT] {line.rstrip()}")
-            if "SUCCESS: Flash programming completed!" in line:
-                success_marker_found = True
+        # for line in process.stdout:
+            # output_queue.put(f"[SCRIPT] {line.rstrip()}")
+            # if "SUCCESS: Flash programming completed!" in line:
+                # success_marker_found = True
 
         output_queue.put(f">>> Process finished with code {return_code}")
         log_to_gui(f"[PYTHON] Process completed with code {return_code}")
