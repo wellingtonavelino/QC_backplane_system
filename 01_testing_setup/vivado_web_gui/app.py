@@ -9,6 +9,12 @@ import tempfile
 import socket
 import re
 
+import platform
+
+IS_WINDOWS = platform.system() == "Windows"
+IS_LINUX = platform.system() == "Linux"
+
+
 app = Flask(__name__)
 
 # Global state
@@ -107,15 +113,17 @@ def resolve_vitis_settings_from_input(user_path: str):
         return None
 
     p = user_path.strip().strip('"')
+    
+    settings_name = "settings64.bat" if IS_WINDOWS else "settings64.sh"
 
     # Case 1: User already specify settings64.bat
-    if p.lower().endswith("settings64.bat") and os.path.isfile(p):
+    if p.lower().endswith(settings_name) and os.path.isfile(p):
         return p
 
     # Case 2: User already specify Vitis folder
     # Ex: C:\Xilinx\Vitis\2022.2  -> C:\Xilinx\Vitis\2022.2\settings64.bat
     if os.path.isdir(p):
-        candidate = os.path.join(p, "settings64.bat")
+        candidate = os.path.join(p, settings_name)
         if os.path.isfile(candidate):
             return candidate
 
@@ -123,7 +131,7 @@ def resolve_vitis_settings_from_input(user_path: str):
     # Try find directories and settings64.bat
     base_dir = os.path.dirname(p)
     for _ in range(4):
-        candidate = os.path.join(base_dir, "settings64.bat")
+        candidate = os.path.join(base_dir, settings_name)
         if os.path.isfile(candidate):
             return candidate
         base_dir = os.path.dirname(base_dir)
@@ -159,12 +167,31 @@ def run_vivado(vivado_exec, script, script_mode, serial_number):
 
             log_to_gui(f"[PYTHON] Using Vitis environment: {vitis_settings}")
 
-            with tempfile.NamedTemporaryFile(mode="w", suffix=".bat", delete=False) as temp_bat:
-                temp_bat.write(f'call "{vitis_settings}"\n')
-                temp_bat.write(f'xsct "{script}"\n')
-                temp_bat_path = temp_bat.name
+            # with tempfile.NamedTemporaryFile(mode="w", suffix=".bat", delete=False) as temp_bat:
+                # temp_bat.write(f'call "{vitis_settings}"\n')
+                # temp_bat.write(f'xsct "{script}"\n')
+                # temp_bat_path = temp_bat.name
 
-            command = ["cmd", "/c", temp_bat_path]
+            # command = ["cmd", "/c", temp_bat_path]
+            
+        if IS_WINDOWS:
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".bat", delete=False) as temp:
+                temp.write(f'call "{vitis_settings}"\n')
+                temp.write(f'xsct "{script}"\n')
+                temp_path = temp.name
+
+            command = ["cmd", "/c", temp_path]
+
+        else:  # Linux
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".sh", delete=False) as temp:
+                temp.write("#!/bin/bash\n")
+                temp.write(f'source "{vitis_settings}"\n')
+                temp.write(f'xsct "{script}"\n')
+                temp_path = temp.name
+    
+            os.chmod(temp_path, 0o755)
+            command = ["bash", temp_path]
+
 
 
         elif ext == ".tcl":
@@ -208,8 +235,13 @@ def run_vivado(vivado_exec, script, script_mode, serial_number):
         return_code = process.returncode
 
         success_marker_found = False
-        for line in stdout_data.splitlines():
-            output_queue.put(f"[SCRIPT] {line}")
+        # for line in stdout_data.splitlines():
+            # output_queue.put(f"[SCRIPT] {line}")
+            # if "SUCCESS: Flash programming completed!" in line:
+                # success_marker_found = True
+                
+        for line in process.stdout:
+            output_queue.put(f"[SCRIPT] {line.rstrip()}")
             if "SUCCESS: Flash programming completed!" in line:
                 success_marker_found = True
 
